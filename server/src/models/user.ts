@@ -19,12 +19,6 @@ const userSchema = new Schema<TUser>({
     type: String,
     required: true,
   },
-
-  role: {
-    type: String,
-    default: "user",
-    required: true,
-  },
 });
 
 export const User = mongoose.model<TUser>("user", userSchema);

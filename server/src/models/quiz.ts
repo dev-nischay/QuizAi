@@ -28,7 +28,10 @@ const quizSchema = new Schema<TQuiz>({
       },
     },
   ],
-  createdAt: new Date().toISOString(),
+  createdAt: {
+    type: Date,
+    default: new Date().toISOString(),
+  },
   createdBy: {
     type: mongoose.Types.ObjectId,
     ref: "user",
