@@ -1,5 +1,3 @@
-import type mongoose from "mongoose";
-import type { JwtPayload } from "jsonwebtoken";
 export type ApiResponse<T> = {
   success: true;
   message?: string;
@@ -11,7 +9,3 @@ export type ApiError = {
   error: string;
   details?: {};
 };
-
-export interface Payload extends JwtPayload {
-  id: string;
-}

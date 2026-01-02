@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import type { loginBody, signupBody } from "../validation/auth-schema.js";
-import type { ApiResponse, Payload } from "../types/constants.js";
+import type { ApiResponse } from "../types/constants.js";
+import type { Payload } from "../../types/global.types.js";
 import { User } from "../models/user.js";
 import { AppError } from "../utils/appError.js";
 import { httpStatus } from "../types/enums.js";

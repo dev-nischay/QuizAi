@@ -1,11 +1,6 @@
 import type { Date, Mongoose } from "mongoose";
 import type mongoose from "mongoose";
-
-export type Questions = {
-  text: string;
-  options: string[];
-  correctOptionIndex: 0 | 1 | 2 | 3;
-};
+import type { Questions } from "../../types/global.types.js";
 
 export type TQuiz = {
   title: string;
