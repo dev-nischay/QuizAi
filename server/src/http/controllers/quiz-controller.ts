@@ -6,15 +6,49 @@ import type { ApiResponse } from "../types/constants.js";
 import mongoose from "mongoose";
 import { AppError } from "../utils/appError.js";
 import { httpStatus } from "../types/enums.js";
+import { QuizMemory } from "../../ws/quiz.memory.js";
 
 export const createQuiz = async (
   req: Request,
   res: Response<ApiResponse<Pick<TQuiz, "title"> & { _id: mongoose.Types.ObjectId }>>,
   next: NextFunction
 ) => {
-  const { title, questions } = req.validatedBody as createQuizBody;
+  // saving quiz in db
+  const { title, questions, quizId } = req.validatedBody as createQuizBody;
   const userId = req.user.id;
   const quiz = await Quiz.create({ title, questions, createdBy: userId });
+
+  // adding quiz to websocket state
+
+  if (QuizMemory.get(quizId)) {
+    return next(new AppError(`Room with id ${quizId} already exists`, httpStatus.BadRequest));
+  }
+
+  const Quesmap = new Map(
+    quiz.questions.map((e) => [
+      e._id,
+      {
+        _id: e._id,
+        text: e.text,
+        options: e.options,
+        correctOptionIndex: e.correctOptionIndex,
+      },
+    ])
+  );
+
+  console.log(Quesmap);
+
+  QuizMemory.set(quizId, {
+    host: userId,
+    quizId,
+    title,
+    questions: Quesmap,
+    answers: new Map(),
+    currentQuestionId: null,
+    users: new Map(),
+  });
+
+  console.log(QuizMemory);
 
   return res.json({
     success: true,
