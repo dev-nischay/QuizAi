@@ -16,10 +16,10 @@ const quizSchema = new Schema<TQuiz>({
       },
       options: {
         type: [String],
-        // validate: {
-        //   validator: (v: string[]) => v.length === 4,
-        //   message: "Options cannot be more than 4",
-        // },
+        validate: {
+          validator: (v: string[]) => v.length === 4,
+          message: "Options cannot be more than 4",
+        },
         required: true,
       },
       correctOptionIndex: {

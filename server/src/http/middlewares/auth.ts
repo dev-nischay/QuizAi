@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/appError.js";
 import { httpStatus } from "../types/enums.js";
 import jwt from "jsonwebtoken";
-import type { Payload } from "../types/constants.js";
+import type { Payload } from "../../types/global.types.js";
 const secret = process.env.JWT_SECRET;
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
