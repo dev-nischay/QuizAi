@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const createQuizSchema = z.object({
   title: z.string().max(1000),
+  quizId: z.string().max(6),
   questions: z.array(
     z.object({
       text: z.string().max(120),

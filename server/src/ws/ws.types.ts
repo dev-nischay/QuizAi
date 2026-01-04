@@ -1,8 +1,33 @@
+import type { Questions } from "../types/global.types.js";
+import type WebSocket from "ws";
+
 export type Client = {
-  id: string;
+  userId: string;
   role: "host" | "guest";
+  quizId: string;
 };
 
-export type AuthWebSocket = WebSocket & {
+export interface AuthWebSocket extends WebSocket {
   user: Client;
+}
+
+export type SocketUser = { ws?: AuthWebSocket; name: string; score: number; answeredCurrent: boolean };
+
+export type QuizRoom = {
+  host: string;
+  quizId: string;
+  title: string;
+  currentQuestionId: number | null;
+  questions: Map<string, Questions>;
+  users: Map<string, SocketUser>;
+
+  answers: Map<string, Map<string, number>>;
+};
+
+export type GuestMessageType = {
+  type: "SUBMIT_ANSWER" | "LEAVE_ROOM";
+};
+
+export type HostMessageType = {
+  type: "JOIN_ROOM" | "START_QUIZ" | "SHOW_QUESTION" | "SHOW_RESULT";
 };

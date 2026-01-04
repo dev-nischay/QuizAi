@@ -20,7 +20,7 @@ export const createQuiz = async (
 
   // adding quiz to websocket state
 
-  if (QuizMemory.get(quizId)) {
+  if (!QuizMemory.has(quizId)) {
     return next(new AppError(`Room with id ${quizId} already exists`, httpStatus.BadRequest));
   }
 
