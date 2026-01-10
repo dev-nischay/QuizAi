@@ -4,12 +4,8 @@ import { type ApiError } from "../types/constants.js";
 import { httpStatus } from "../types/enums.js";
 
 export const error: ErrorRequestHandler = (err: unknown, req: Request, res: Response<ApiError>, next: NextFunction) => {
-  console.log("hey");
-
   if (err instanceof AppError) {
     const statusCode = err.statusCode || 500;
-
-    console.log(`expected Error:${err.message} \n stack ${err.stack} `);
 
     if (err.details && Object.keys(err.details).length > 0) {
       return res.status(statusCode).json({
