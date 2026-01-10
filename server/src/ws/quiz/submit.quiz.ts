@@ -32,7 +32,7 @@ export const submitAnswer = (socket: AuthWebSocket, message: SubmitAnswerType) =
 
     if (quiz.questions.get(message.questionId)?.correctOptionIndex === message.selectedOptionIndex) {
       currentUser!.score += 1; // increment its value
-
+      console.log("submit question called" + JSON.stringify(quiz));
       return socket.send(
         JSON.stringify({
           type: "ANSWER_ACK",

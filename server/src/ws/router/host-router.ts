@@ -1,20 +1,18 @@
 import type { AuthWebSocket } from "../ws.types.js";
-
-import type { HostMessageType } from "../ws.types.js";
-export const hostRouter = (socket: AuthWebSocket, message: HostMessageType) => {
+import { startQuiz } from "../quiz/start.quiz.js";
+import { joinRoom } from "../quiz/join.quiz.js";
+import { showQuestion } from "../quiz/question.quiz.js";
+import type { ClientResponse } from "../quiz/quiz.types.js";
+export const hostRouter = (socket: AuthWebSocket, message: ClientResponse) => {
   const typeResponse = message.type;
 
   switch (typeResponse) {
-    case "JOIN_ROOM":
-      console.log("ROOM JOINED");
-      break;
-
     case "START_QUIZ":
-      console.log("QUIZ STARTED");
+      startQuiz(socket, message);
       break;
 
     case "SHOW_QUESTION":
-      console.log("QUESTION DISPLA");
+      showQuestion(socket, message);
       break;
 
     case "SHOW_RESULT":

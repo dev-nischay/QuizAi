@@ -24,6 +24,7 @@ export const showQuestion = (socket: AuthWebSocket, message: ShowQuestionType) =
         text: currentQuestion.text,
         options: currentQuestion.options,
       });
+      console.log("add a question called" + JSON.stringify(quiz));
 
       for (const { ws } of quiz.users.values()) {
         if (ws?.readyState === ws?.OPEN) {

@@ -23,11 +23,3 @@ export type QuizRoom = {
 
   answers: Map<string, Map<string, number>>;
 };
-
-export type GuestMessageType = {
-  type: "SUBMIT_ANSWER" | "LEAVE_ROOM";
-};
-
-export type HostMessageType = {
-  type: "JOIN_ROOM" | "START_QUIZ" | "SHOW_QUESTION" | "SHOW_RESULT";
-};

@@ -24,6 +24,7 @@ export const joinRoom = (socket: AuthWebSocket, message: JoinMessageType) => {
       score: 0,
       answeredCurrent: false,
     });
+    console.log("join quiz called" + JSON.stringify(quiz));
   } catch (error) {
     error instanceof Error ? socket.send(error.message) : console.log(error);
   }

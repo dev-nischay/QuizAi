@@ -18,6 +18,7 @@ export const authenticateWs = (req: IncomingMessage): Client => {
   const role = parsedUrl.searchParams.get("role");
   const quizId = parsedUrl.searchParams.get("quizId") as string;
 
+  const quiz = QuizMemory.get(quizId);
   if (!token || !role) {
     throw new Error("Invalid or Missing credentials");
   }
@@ -28,8 +29,12 @@ export const authenticateWs = (req: IncomingMessage): Client => {
     throw new Error("Invalid role");
   }
 
-  if (QuizMemory.get(quizId) === undefined) {
+  if (!quiz) {
     throw new Error("Quiz not found");
+  }
+
+  if (role === "host" && quiz.host !== userId) {
+    throw new Error("Unauthorized Host");
   }
 
   return {

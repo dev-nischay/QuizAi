@@ -10,7 +10,7 @@ import { QuizMemory } from "../../ws/quiz.memory.js";
 
 export const createQuiz = async (
   req: Request,
-  res: Response<ApiResponse<Pick<TQuiz, "title"> & { _id: mongoose.Types.ObjectId }>>,
+  res: Response<ApiResponse<Pick<TQuiz, "title">>>,
   next: NextFunction
 ) => {
   // saving quiz in db
@@ -20,23 +20,21 @@ export const createQuiz = async (
 
   // adding quiz to websocket state
 
-  if (!QuizMemory.has(quizId)) {
+  if (QuizMemory.has(quizId)) {
     return next(new AppError(`Room with id ${quizId} already exists`, httpStatus.BadRequest));
   }
 
   const Quesmap = new Map(
     quiz.questions.map((e) => [
-      e._id,
+      String(e._id),
       {
-        _id: e._id,
+        _id: String(e._id),
         text: e.text,
         options: e.options,
         correctOptionIndex: e.correctOptionIndex,
       },
     ])
   );
-
-  console.log(Quesmap);
 
   QuizMemory.set(quizId, {
     host: userId,
@@ -53,9 +51,9 @@ export const createQuiz = async (
   return res.json({
     success: true,
     data: {
-      _id: quiz._id,
       title,
     },
+    message: `Room with id ${quizId} is created`,
   });
 };
 
