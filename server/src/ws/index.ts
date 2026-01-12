@@ -12,12 +12,15 @@ export const initWebSocket = (server: Server) => {
   const wss = new WebSocketServer({ server });
   // assuming room is already created
   wss.on("connection", (socket: AuthWebSocket, req) => {
-    statusLogger(socket);
     try {
       const user = authenticateWs(req);
       socket.user = user;
-    } catch {
-      socket.close(1008, "Unauthorized");
+      statusLogger(socket);
+    } catch (error) {
+      if (error instanceof Error) {
+        socket.close(1008, error.message);
+      }
+      console.log(error);
       return;
     }
 

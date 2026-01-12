@@ -11,6 +11,10 @@ export const hostRouter = (socket: AuthWebSocket, message: ClientResponse) => {
       startQuiz(socket, message);
       break;
 
+    case "JOIN_ROOM":
+      joinRoom(socket, message);
+      break;
+
     case "SHOW_QUESTION":
       showQuestion(socket, message);
       break;
