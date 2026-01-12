@@ -14,18 +14,18 @@ if (!HOST || !Secret) {
 
 export const authenticateWs = (req: IncomingMessage): Client => {
   const parsedUrl = getUrl(req, HOST);
-  const token = parsedUrl.searchParams.get("jwtToken");
-  const role = parsedUrl.searchParams.get("role");
-  const quizId = parsedUrl.searchParams.get("quizId") as string;
+  const token = String(parsedUrl.searchParams.get("jwtToken"));
+  const role = String(parsedUrl.searchParams.get("role")).trim();
+  const quizId = String(parsedUrl.searchParams.get("quizId"));
 
   const quiz = QuizMemory.get(quizId);
   if (!token || !role) {
     throw new Error("Invalid or Missing credentials");
   }
 
-  const { userId } = jwt.verify(token, Secret) as Payload;
+  const { id } = jwt.verify(token, Secret) as Payload;
 
-  if (role !== "host" || "guest") {
+  if (role != "host" && role != "guest") {
     throw new Error("Invalid role");
   }
 
@@ -33,12 +33,12 @@ export const authenticateWs = (req: IncomingMessage): Client => {
     throw new Error("Quiz not found");
   }
 
-  if (role === "host" && quiz.host !== userId) {
+  if (role === "host" && String(quiz.host).trim() != id) {
     throw new Error("Unauthorized Host");
   }
 
   return {
-    userId,
+    userId: id,
     role,
     quizId,
   };
