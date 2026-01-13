@@ -26,3 +26,7 @@ export const showResultSchema = z.object({
 });
 
 export type joinBody = z.infer<typeof joinQuizSchema>;
+export type startBody = z.infer<typeof startQuizSchema>;
+export type showQuestionBody = z.infer<typeof showQuestionSchema>;
+export type submitQuestoinBody = z.infer<typeof submitAnswerSchema>;
+export type resultBody = z.infer<typeof showResultSchema>;
