@@ -8,5 +8,4 @@ import { auth } from "../middlewares/auth.js";
 quizRouter.use(auth);
 quizRouter.post("/", Validate(createQuizSchema), asyncHandler(createQuiz));
 quizRouter.delete("/:id", Validate(paramsValidator, "params"), asyncHandler(deleteQuiz));
-// quizRouter.post("/:id/questions/",Validate(updateQuizSchema),asyncHandler()); update a quiz
 quizRouter.get("/", asyncHandler(getQuiz));

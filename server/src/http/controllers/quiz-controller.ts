@@ -15,7 +15,7 @@ export const createQuiz = async (
 ) => {
   // saving quiz in db
   const { title, questions, quizId } = req.validatedBody as createQuizBody;
-  const userId = req.user.id;
+  const userId = req.user.userId;
   const quiz = await Quiz.create({ title, questions, createdBy: userId });
 
   // adding quiz to websocket state
@@ -62,7 +62,7 @@ type DeleteQuizResponse = Pick<TQuiz, "title"> & {
 };
 
 export const deleteQuiz = async (req: Request, res: Response<ApiResponse<DeleteQuizResponse>>, next: NextFunction) => {
-  const userId = req.user.id;
+  const userId = req.user.userId;
   const quizId = new mongoose.Types.ObjectId(req.validatedParams.id);
 
   const quiz = await Quiz.findOneAndDelete({ createdBy: userId, _id: quizId }, { new: true });
@@ -82,7 +82,7 @@ export const deleteQuiz = async (req: Request, res: Response<ApiResponse<DeleteQ
 
 export const getQuiz = async (req: Request, res: Response, next: NextFunction) => {
   // add response type later
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   const quiz = await Quiz.find({ createdBy: userId }).select("-__v");
 

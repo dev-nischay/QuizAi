@@ -58,7 +58,7 @@ export const loginAccount = async (
   if (secret) {
     const payload = jwt.sign(
       {
-        id: userExits._id,
+        userId: userExits._id,
       },
       secret
     );
@@ -73,7 +73,7 @@ export const loginAccount = async (
 };
 
 export const getAccount = async (req: Request, res: Response<ApiResponse<TUser>>, next: NextFunction) => {
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   const userInfo = (await User.findOne({ _id: userId }).select("username  email ")) as TUser;
 

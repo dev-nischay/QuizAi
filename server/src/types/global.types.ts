@@ -1,7 +1,7 @@
 import type { JwtPayload } from "jsonwebtoken";
 
 export interface Payload extends JwtPayload {
-  id: string;
+  userId: string;
 }
 
 export type Questions = {
