@@ -1,46 +1,40 @@
-import { QuizMemory } from "../quiz.memory.js";
 import { isOpen } from "../utils/isOpen.js";
-import type { AuthWebSocket, SocketUser } from "../ws.types.js";
+import type { AuthWebSocket } from "../ws.types.js";
 import type { ShowQuestionType } from "./quiz.types.js";
+import { type showQuestionBody, showQuestionSchema } from "../zod/quizActionsSchema.js";
+import { zodParser } from "../zod/zodParser.js";
+import { getQuiz } from "../utils/getQuiz.js";
+import { isHost } from "../utils/validateRole.js";
+import { wsError } from "../utils/wsError.js";
 
-export const showQuestion = (socket: AuthWebSocket, message: ShowQuestionType) => {
-  try {
-    const { quizId, role, userId } = socket.user;
+export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionType) => {
+  const { questionId } = zodParser(message, showQuestionSchema) as showQuestionBody;
 
-    const quiz = QuizMemory.get(quizId);
+  const { quizId, role, userId } = socket.user;
 
-    if (role !== "host" || !quiz || quiz.host !== userId || !isOpen(socket)) {
-      throw new Error("Unauthorized");
-    }
+  const quiz = getQuiz(quizId);
 
-    if (quiz.questions.size > 0) {
-      const currentQuestion = quiz.questions.get(message.questionId);
-      if (!currentQuestion) throw new Error("Question not found");
+  if (role !== "host" || !isHost(userId, quizId) || !isOpen(socket)) {
+    throw new wsError("Unauthorized user");
+  }
 
-      const response = JSON.stringify({
-        type: "QUESTION",
-        quizId,
-        questionId: currentQuestion._id,
-        text: currentQuestion.text,
-        options: currentQuestion.options,
-      });
-      console.log("add a question called" + JSON.stringify(quiz));
+  if (quiz.questions.size > 0) {
+    const currentQuestion = quiz.questions.get(questionId);
+    console.log(currentQuestion);
+    if (!currentQuestion) throw new wsError("Question not found");
 
-      for (const { ws } of quiz.users.values()) {
-        if (ws?.readyState === ws?.OPEN) {
-          ws?.send(response);
-        }
+    const response = JSON.stringify({
+      type: "QUESTION",
+      quizId,
+      questionId: currentQuestion._id,
+      text: currentQuestion.text,
+      options: currentQuestion.options,
+    });
+
+    for (const { ws } of quiz.users.values()) {
+      if (ws?.readyState === ws?.OPEN) {
+        ws?.send(response);
       }
-    }
-  } catch (error) {
-    console.error(error);
-    if (error instanceof Error) {
-      socket.send(
-        JSON.stringify({
-          type: "Error",
-          message: error.message,
-        })
-      );
     }
   }
 };

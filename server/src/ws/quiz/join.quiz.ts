@@ -2,30 +2,27 @@ import { QuizMemory } from "../quiz.memory.js";
 import type { AuthWebSocket } from "../ws.types.js";
 import { isOpen } from "../utils/isOpen.js";
 import type { JoinMessageType } from "./quiz.types.js";
+import { getQuiz } from "../utils/getQuiz.js";
+import { wsError } from "../utils/wsError.js";
+import { joinQuizSchema, type joinBody } from "../zod/quizActionsSchema.js";
+import { zodParser } from "../zod/zodParser.js";
 
-export const joinRoom = (socket: AuthWebSocket, message: JoinMessageType) => {
+export const joinRoom = async (socket: AuthWebSocket, message: JoinMessageType) => {
+  const { name } = zodParser(message, joinQuizSchema) as joinBody;
+
   const { userId, quizId } = socket.user;
 
   if (!isOpen(socket)) {
-    throw new Error("Socket is not Open");
+    throw new wsError("Socket is not Open");
   }
+  const quiz = getQuiz(quizId);
 
-  // add  strictness in run time
-  try {
-    const quiz = QuizMemory.get(quizId);
+  quiz.users.set(userId, {
+    ws: socket,
+    name,
+    score: 0,
+    answeredCurrent: false,
+  });
 
-    if (quiz === undefined || !quiz) {
-      throw new Error("Quiz not found");
-    }
-
-    quiz.users.set(userId, {
-      ws: socket,
-      name: message.name,
-      score: 0,
-      answeredCurrent: false,
-    });
-    console.log("join quiz called" + JSON.stringify(quiz));
-  } catch (error) {
-    error instanceof Error ? socket.send(error.message) : console.log(error);
-  }
+  console.log(`user: ${message.name} joined room:${quizId}`);
 };

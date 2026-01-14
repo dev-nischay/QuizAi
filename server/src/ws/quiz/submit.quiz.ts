@@ -2,56 +2,63 @@ import { QuizMemory } from "../quiz.memory.js";
 import type { AuthWebSocket } from "../ws.types.js";
 import type { SubmitAnswerType } from "./quiz.types.js";
 import { isOpen } from "../utils/isOpen.js";
-export const submitAnswer = (socket: AuthWebSocket, message: SubmitAnswerType) => {
+import { getQuiz } from "../utils/getQuiz.js";
+import { wsError } from "../utils/wsError.js";
+import { zodParser } from "../zod/zodParser.js";
+import { isParticipant } from "../utils/validateRole.js";
+import { submitAnswerSchema, type submitAnswerBody } from "../zod/quizActionsSchema.js";
+export const submitAnswer = async (socket: AuthWebSocket, message: SubmitAnswerType) => {
   const { role, quizId, userId } = socket.user;
 
-  try {
-    const quiz = QuizMemory.get(quizId);
+  const { questionId, selectedOptionIndex } = zodParser(message, submitAnswerSchema) as submitAnswerBody;
 
-    if (!quiz?.users.has(userId) || !quiz || !isOpen(socket) || !quiz.questions.has(message.questionId)) {
-      return new Error("Unauthorized Acess");
-    }
+  const quiz = getQuiz(quizId);
 
-    const currentUser = quiz.users.get(userId);
+  if (!isParticipant(userId, questionId) || !isOpen(socket) || !quiz.questions.has(questionId)) {
+    return new wsError("Unauthorized Acess");
+  }
 
-    if (currentUser?.answeredCurrent) {
-      return socket.send(
-        JSON.stringify({
-          type: "ANSWER_ACK",
-          accepted: false,
-          reason: "already_answered",
-          message: "You already answered this question.",
-        })
-      );
-    }
+  const currentUser = quiz.users.get(userId);
 
-    const answredMap = new Map<string, number>();
-    answredMap.set(userId, message.selectedOptionIndex);
-    // check this
-    quiz.answers.set(message.questionId, answredMap);
+  if (currentUser?.answeredCurrent) {
+    return socket.send(
+      JSON.stringify({
+        type: "ANSWER_ACK",
+        accepted: false,
+        reason: "already_answered",
+        message: "You already answered this question.",
+      })
+    );
+  }
 
-    if (quiz.questions.get(message.questionId)?.correctOptionIndex === message.selectedOptionIndex) {
-      currentUser!.score += 1; // increment its value
-      console.log("submit question called" + JSON.stringify(quiz));
-      return socket.send(
-        JSON.stringify({
-          type: "ANSWER_ACK",
-          accepted: true,
-          correct: true,
-          yourScore: 1,
-          message: "Correct answer!",
-        })
-      );
-    } else {
-      return socket.send(
-        JSON.stringify({
-          type: "ANSWER_ACK",
-          accepted: true,
-          correct: false,
-          yourScore: 0,
-          message: "Incorrect answer!",
-        })
-      );
-    }
-  } catch (error) {}
+  const answredMap = new Map<string, number>();
+  answredMap.set(userId, selectedOptionIndex);
+  // check this
+  quiz.answers.set(questionId, answredMap);
+
+  currentUser!.answeredCurrent = true; // remove not operator later
+
+  if (quiz.questions.get(questionId)?.correctOptionIndex === selectedOptionIndex) {
+    currentUser!.score += 100; // increment its value
+
+    return socket.send(
+      JSON.stringify({
+        type: "ANSWER_ACK",
+        accepted: true,
+        correct: true,
+        yourScore: currentUser?.score,
+        message: "Correct answer!",
+      })
+    );
+  } else {
+    return socket.send(
+      JSON.stringify({
+        type: "ANSWER_ACK",
+        accepted: true,
+        correct: false,
+        yourScore: currentUser?.score,
+        message: "Incorrect answer!",
+      })
+    );
+  }
 };
