@@ -7,7 +7,7 @@ export const zodParser = (rawData: object, zodSchema: ZodType) => {
   if (result.error) {
     const readableError = Object.fromEntries(result.error.issues.map((issue) => [issue.path.join(), issue.message]));
 
-    throw new wsError("Incorrect or Invalid feilds", 1003, readableError);
+    throw new wsError("Incorrect or Invalid feilds", false, 1003, readableError);
   }
 
   return result.data;

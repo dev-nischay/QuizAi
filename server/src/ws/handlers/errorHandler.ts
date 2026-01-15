@@ -1,5 +1,6 @@
 import { wsError } from "../utils/wsError.js";
-import type { AuthWebSocket } from "../ws.types.js";
+import type { AuthWebSocket } from "../types/ws.types.js";
+import { wsSend } from "../utils/wsSend.js";
 
 export const handleError = async (socket: AuthWebSocket, error: unknown) => {
   if (error instanceof wsError) {
@@ -7,13 +8,14 @@ export const handleError = async (socket: AuthWebSocket, error: unknown) => {
     console.log("Expected Error in websockets", error);
     console.log("closing socket connection");
 
-    return socket.close(
-      errorCode,
-      JSON.stringify({
+    if (error.closeSocket) {
+      return socket.close(errorCode, error.message);
+    } else {
+      return wsSend(socket, {
         type: "Error",
         error: error.message,
-      })
-    );
+      });
+    }
   }
 
   if (error instanceof Error) {
@@ -29,4 +31,3 @@ export const handleError = async (socket: AuthWebSocket, error: unknown) => {
     );
   }
 };
-// generic differntiator between closing a socket and sending a response is pending
