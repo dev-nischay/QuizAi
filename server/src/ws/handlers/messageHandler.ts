@@ -1,5 +1,5 @@
-import type { ClientResponse } from "../quiz/quiz.types.js";
-import type { AuthWebSocket } from "../ws.types.js";
+import type { ClientResponse } from "../types/client.types.js";
+import type { AuthWebSocket } from "../types/ws.types.js";
 import { isOpen } from "../utils/isOpen.js";
 import { wsError } from "../utils/wsError.js";
 import guestRouter from "../router/guest-router.js";

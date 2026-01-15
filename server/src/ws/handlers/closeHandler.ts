@@ -1,4 +1,4 @@
-import type { AuthWebSocket } from "../ws.types.js";
+import type { AuthWebSocket } from "../types/ws.types.js";
 import { getQuiz } from "../utils/getQuiz.js";
 export const handleClose = (socket: AuthWebSocket) => {
   const { quizId, userId } = socket.user;

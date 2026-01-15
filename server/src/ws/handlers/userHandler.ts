@@ -1,5 +1,5 @@
 import type { IncomingMessage } from "http";
-import type { AuthWebSocket } from "../ws.types.js";
+import type { AuthWebSocket } from "../types/ws.types.js";
 import authenticateWs from "../authenticate.js";
 import { isOpen } from "../utils/isOpen.js";
 import { wsError } from "../utils/wsError.js";
