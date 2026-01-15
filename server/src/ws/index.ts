@@ -1,8 +1,6 @@
 import { WebSocketServer, type RawData } from "ws";
 import type { Server } from "http";
-import type { AuthWebSocket } from "./ws.types.js";
-import { QuizMemory } from "./quiz.memory.js";
-import type { ClientResponse } from "./quiz/quiz.types.js";
+import type { AuthWebSocket } from "./types/ws.types.js";
 import { handleError } from "./handlers/errorHandler.js";
 import { handleUser } from "./handlers/userHandler.js";
 import { handleMessage } from "./handlers/messageHandler.js";

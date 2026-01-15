@@ -2,7 +2,7 @@ import type { IncomingMessage } from "http";
 import jwt from "jsonwebtoken";
 import { getUrl } from "./utils/parseUrl.js";
 import type { Payload } from "../types/global.types.js";
-import type { Client } from "./ws.types.js";
+import type { Client } from "./types/ws.types.js";
 import { getQuiz } from "./utils/getQuiz.js";
 import { connectUserSchema } from "./zod/userSchema.js";
 import type { userBody } from "./zod/userSchema.js";
@@ -11,7 +11,7 @@ import { zodParser } from "./zod/zodParser.js";
 import { wsError } from "./utils/wsError.js";
 
 if (!Secret) {
-  console.error("Erorr in Envoirment Variables");
+  console.error("Error in Envoirment Variables");
   process.exitCode = 1;
 }
 
@@ -24,7 +24,7 @@ export const authenticateWs = (req: IncomingMessage): Client => {
   const quiz = getQuiz(quizId);
 
   if (!token || !role) {
-    throw new wsError("Invalid or Missing credentials", 1003);
+    throw new wsError("Invalid or Missing credentials", true, 1003);
   }
 
   const { userId } = jwt.verify(token, Secret) as Payload;
@@ -32,7 +32,7 @@ export const authenticateWs = (req: IncomingMessage): Client => {
   const result = zodParser({ userId, role, quizId }, connectUserSchema) as userBody;
 
   if (role === "host" && String(quiz.host).trim() !== userId) {
-    throw new wsError("Unauthorized Host", 1008);
+    throw new wsError("Unauthorized Host", true, 1008);
   }
 
   return result;
