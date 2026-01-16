@@ -11,7 +11,6 @@ export const startQuizSchema = z.object({
 
 export const showQuestionSchema = z.object({
   type: z.literal("SHOW_QUESTION"),
-  questionId: z.string().max(24, "invalid question Id"),
 });
 
 export const submitAnswerSchema = z.object({
