@@ -1,10 +1,10 @@
 import type { Date, Mongoose } from "mongoose";
 import type mongoose from "mongoose";
-import type { Questions } from "../../types/global.types.js";
+import type { Question } from "../../types/global.types.js";
 
 export type TQuiz = {
   title: string;
-  questions: Questions[];
+  questions: Question[];
   createdAt?: Date;
   createdBy: mongoose.Types.ObjectId;
 };
