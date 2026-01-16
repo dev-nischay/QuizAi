@@ -59,6 +59,7 @@ export const loginAccount = async (
     const payload = jwt.sign(
       {
         userId: userExits._id,
+        username: userExits.username,
       },
       secret
     );

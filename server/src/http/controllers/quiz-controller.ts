@@ -15,7 +15,7 @@ export const createQuiz = async (
 ) => {
   // saving quiz in db
   const { title, questions, quizId } = req.validatedBody as createQuizBody;
-  const userId = req.user.userId;
+  const { username, userId } = req.user;
   const quiz = await Quiz.create({ title, questions, createdBy: userId });
 
   // adding quiz to websocket state
@@ -38,6 +38,10 @@ export const createQuiz = async (
 
   QuizMemory.set(quizId, {
     host: userId,
+    hostConnection: {
+      name: username,
+      ws: null,
+    },
     quizId,
     title,
     questions: Quesmap,
