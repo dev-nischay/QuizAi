@@ -1,4 +1,4 @@
-import type { AuthWebSocket } from "../ws.types.js";
+import type { AuthWebSocket } from "../types/ws.types.js";
 import chalk from "chalk";
 export const statusLogger = (socket: AuthWebSocket) => {
   const userId = chalk.green(socket.user);
