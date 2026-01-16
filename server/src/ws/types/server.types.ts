@@ -4,7 +4,7 @@
 // LEADERBOARD;
 // QUIZ_ENDED;
 // ERROR;
-import type { Questions } from "../../types/global.types.js";
+import type { Question } from "../../types/global.types.js";
 import type { LeaderBoard, Result } from "./ws.types.js";
 export type JoinResponse = {
   type: "USER_JOINED";
@@ -17,7 +17,7 @@ export type StartResponse = {
   message: string;
 };
 
-export type QuestionResponse = Pick<Questions, "text" | "options"> & {
+export type QuestionResponse = Pick<Question, "text" | "options"> & {
   type: "QUESTION";
   quizId: string;
   questionId: string;
@@ -50,6 +50,11 @@ export type LeaderboardUpdates = {
   data: LeaderBoard[];
 };
 
+export type QuizCompleted = {
+  type: "QUIZ_COMPLETED";
+  message: "Quiz finished";
+};
+
 export type ServerResponse =
   | JoinResponse
   | StartResponse
@@ -57,4 +62,5 @@ export type ServerResponse =
   | SubmitAnswerResponse
   | ShowResultResponse
   | ServerError
-  | LeaderboardUpdates;
+  | LeaderboardUpdates
+  | QuizCompleted;

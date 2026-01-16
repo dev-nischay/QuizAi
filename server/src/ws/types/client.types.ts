@@ -23,6 +23,10 @@ export type ShowResultRequest = {
   questionId: string;
 };
 
+export type LeaverQuizRequest = {
+  type: "LEAVE_QUIZ";
+};
+
 export type ClientResponse =
   | JoinMessageRequest
   | ShowQuestionRequest
