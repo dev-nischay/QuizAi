@@ -3,7 +3,12 @@ import { AppError } from "../utils/appError.js";
 import { httpStatus } from "../types/enums.js";
 import jwt from "jsonwebtoken";
 import type { Payload } from "../../types/global.types.js";
-const secret = process.env.JWT_SECRET;
+const Secret = process.env.JWT_SECRET;
+
+if (!Secret) {
+  console.error("Error in Envoirment Variables");
+  process.exitCode = 1;
+}
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -19,8 +24,10 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const decode = jwt.verify(token, secret as string) as Payload;
-    req.user = decode;
+    const decode = jwt.verify(token, Secret as string) as Payload;
+
+    const { userId, username } = decode;
+    req.user = { userId, username };
 
     next();
   } catch (error) {
