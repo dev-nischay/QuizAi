@@ -14,8 +14,10 @@ export const createQuiz = async (
   next: NextFunction
 ) => {
   // saving quiz in db
+
   const { title, questions, quizId } = req.validatedBody as createQuizBody;
   const { username, userId } = req.user;
+  console.log(req.user.userId, req.user.username);
   const quiz = await Quiz.create({ title, questions, createdBy: userId });
 
   // adding quiz to websocket state
@@ -90,12 +92,12 @@ export const getQuiz = async (req: Request, res: Response, next: NextFunction) =
 
   const quiz = await Quiz.find({ createdBy: userId }).select("-__v");
 
-  if (!quiz) {
+  if (!quiz || quiz.length === 0) {
     return next(new AppError("quiz not found ", httpStatus.NotFound));
   }
 
   return res.json({
     success: true,
-    ...quiz,
+    quiz,
   });
 };
