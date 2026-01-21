@@ -12,7 +12,7 @@ export const handleError = async (socket: AuthWebSocket, error: unknown) => {
       return socket.close(errorCode, error.message);
     } else {
       return wsSend(socket, {
-        type: "Error",
+        type: "ERROR",
         error: error.message,
       });
     }
