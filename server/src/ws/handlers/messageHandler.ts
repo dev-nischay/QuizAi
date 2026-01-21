@@ -4,23 +4,23 @@ import { isOpen } from "../utils/isOpen.js";
 import { wsError } from "../utils/wsError.js";
 import guestRouter from "../router/guest-router.js";
 import hostRouter from "../router/host-router.js";
-export const handleMessage = (socket: AuthWebSocket, raw: any) => {
+import type { RawData } from "ws";
+export const handleMessage = async (socket: AuthWebSocket, raw: RawData) => {
   if (!isOpen(socket)) {
-    throw new wsError("Socket Connection Failed");
+    throw new wsError("Socket Connection Failed", true);
   }
 
   const response: ClientResponse = JSON.parse(String(raw));
   switch (socket.user.role) {
     case "guest":
-      guestRouter(socket, response);
+      await guestRouter(socket, response);
       break;
 
     case "host":
-      hostRouter(socket, response);
+      await hostRouter(socket, response);
       break;
 
     default:
-      socket.close(1002, "Invalid role");
-      break;
+      throw new wsError("Invalid Role", true, 1002);
   }
 };
