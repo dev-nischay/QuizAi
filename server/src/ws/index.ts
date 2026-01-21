@@ -7,29 +7,27 @@ import { handleMessage } from "./handlers/messageHandler.js";
 import { handleClose } from "./handlers/closeHandler.js";
 export const initWebSocket = (server: Server) => {
   const wss = new WebSocketServer({ server });
-  wss.on("connection", (socket: AuthWebSocket, req) => {
+  wss.on("connection", async (socket: AuthWebSocket, req) => {
     try {
       handleUser(socket, req);
     } catch (error) {
-      handleError(socket, error);
+      await handleError(socket, error);
     }
 
-    socket.on("message", (rawData: RawData) => {
+    socket.on("message", async (rawData: RawData) => {
       try {
-        handleMessage(socket, rawData);
+        await handleMessage(socket, rawData);
       } catch (error) {
-        handleError(socket, error);
+        await handleError(socket, error);
       }
     });
 
-    socket.on("close", () => {
+    socket.on("close", async () => {
       try {
-        handleClose(socket);
+        await handleClose(socket);
       } catch (error) {
-        handleError(socket, error);
+        await handleError(socket, error);
       }
     });
   });
 };
-
-// handle reconnect
