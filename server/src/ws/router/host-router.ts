@@ -1,30 +1,41 @@
-import type { AuthWebSocket } from "../ws.types.js";
-import { startQuiz } from "../quiz/start.quiz.js";
-import { joinRoom } from "../quiz/join.quiz.js";
-import { showQuestion } from "../quiz/question.quiz.js";
-import type { ClientResponse } from "../quiz/quiz.types.js";
-export const hostRouter = (socket: AuthWebSocket, message: ClientResponse) => {
+import type { AuthWebSocket } from "../types/ws.types.js";
+import { startQuiz } from "../quiz/hostControls/start.quiz.js";
+import { showQuestion } from "../quiz/hostControls/question.quiz.js";
+import type { ClientResponse } from "../types/client.types.js";
+import { wsError } from "../utils/wsError.js";
+import { isOpen } from "../utils/isOpen.js";
+import { isHost } from "../utils/validateRole.js";
+import { wsSend } from "../utils/wsSend.js";
+export const hostRouter = async (socket: AuthWebSocket, message: ClientResponse) => {
   const typeResponse = message.type;
+  const { role, quizId, userId } = socket.user;
+
+  if (!isOpen) {
+    throw new wsError("socket not open", true);
+  }
+
+  if (role !== "host" || !isHost(userId, quizId)) {
+    throw new wsError("Unauthorized Acess", true);
+  }
 
   switch (typeResponse) {
     case "START_QUIZ":
-      startQuiz(socket, message);
-      break;
-
-    case "JOIN_ROOM":
-      joinRoom(socket, message);
+      await startQuiz(socket, message);
       break;
 
     case "SHOW_QUESTION":
-      showQuestion(socket, message);
+      await showQuestion(socket, message);
       break;
 
     case "SHOW_RESULT":
-      console.log("DISPLAY RESULT");
+      wsSend(socket, {
+        type: "RESPONSE",
+        message: "This feature will be available soon",
+      });
       break;
 
     default:
-      console.log("Error response not valid");
+      throw new wsError("Invalid Route", false, 1002);
   }
 };
 

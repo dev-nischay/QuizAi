@@ -1,9 +1,3 @@
-// USER_JOINED;
-// QUESTION;
-// ANSWER_RESULT;
-// LEADERBOARD;
-// QUIZ_ENDED;
-// ERROR;
 import type { Question } from "../../types/global.types.js";
 import type { LeaderBoard, Result } from "./ws.types.js";
 export type JoinResponse = {
@@ -39,7 +33,7 @@ export type ShowResultResponse = {
 };
 
 export type ServerError = {
-  type: "Error";
+  type: "ERROR";
   error: string;
   details?: {};
 };
@@ -50,9 +44,19 @@ export type LeaderboardUpdates = {
   data: LeaderBoard[];
 };
 
+export type LobbyUpdates = {
+  type: "LOBBY";
+  userCount: number;
+};
+
 export type QuizCompleted = {
   type: "QUIZ_COMPLETED";
-  message: "Quiz finished";
+  message: string;
+};
+
+export type GeneralResponse = {
+  type: "RESPONSE";
+  message: string;
 };
 
 export type ServerResponse =
@@ -63,4 +67,6 @@ export type ServerResponse =
   | ShowResultResponse
   | ServerError
   | LeaderboardUpdates
-  | QuizCompleted;
+  | QuizCompleted
+  | GeneralResponse
+  | LobbyUpdates;

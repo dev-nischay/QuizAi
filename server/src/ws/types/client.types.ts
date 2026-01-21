@@ -9,7 +9,6 @@ export type StartMessageRequest = {
 
 export type ShowQuestionRequest = {
   type: "SHOW_QUESTION";
-  questionId: string;
 };
 
 export type SubmitAnswerRequest = {
