@@ -18,6 +18,13 @@ export const createQuiz = async (
   const { title, questions, quizId } = req.validatedBody as createQuizBody;
   const { username, userId } = req.user;
   console.log(req.user.userId, req.user.username);
+
+  const quizExists = await Quiz.findOne({ createdBy: userId });
+
+  if (quizExists) {
+    return next(new AppError("quiz already exists", httpStatus.BadRequest));
+  }
+
   const quiz = await Quiz.create({ title, questions, createdBy: userId });
 
   // adding quiz to websocket state
