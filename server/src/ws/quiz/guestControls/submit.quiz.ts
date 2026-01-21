@@ -61,7 +61,6 @@ export const submitAnswer = async (socket: AuthWebSocket, message: SubmitAnswerR
       message: "Correct answer!",
     });
   } else {
-    console.dir(quiz.answers, { depth: 2 });
     return wsSend(socket, {
       type: "ANSWER_RESULT",
       accepted: true,

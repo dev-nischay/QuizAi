@@ -5,6 +5,7 @@ import { wsError } from "../../utils/wsError.js";
 import { joinQuizSchema, type joinBody } from "../../zod/quizActionsSchema.js";
 import { zodParser } from "../../zod/zodParser.js";
 import { wsSend } from "../../utils/wsSend.js";
+import { lobbyUpdates } from "../lobby.quiz.js";
 export const joinRoom = async (socket: AuthWebSocket, message: JoinMessageRequest) => {
   const { name } = zodParser(message, joinQuizSchema) as joinBody;
 
@@ -27,6 +28,7 @@ export const joinRoom = async (socket: AuthWebSocket, message: JoinMessageReques
   });
 
   console.log(`user: ${message.name} joined room:${quizId}`);
+  lobbyUpdates(quiz);
 
   wsSend(socket, { type: "USER_JOINED", message: `room joined with id ${quizId}` });
 };
