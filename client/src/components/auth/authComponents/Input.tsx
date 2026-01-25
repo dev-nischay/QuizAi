@@ -12,7 +12,7 @@ export default function Input({ placeholder, id, className, ref }: InputProps) {
         ref={ref}
         required
         placeholder={placeholder}
-        className={`w-full  px-4 py-3 rounded-lg outline-none mt-1  ring-0 bg-black border border-emerald-900  placeholder:text-gray-500 focus:border-emerald-600 ${className}`}
+        className={`w-full  px-4 py-3 rounded-lg outline-none mt-1  ring-0 bg-black border border-emerald-950  placeholder:text-gray-500 focus:border-emerald-700 hover:border-emerald-700 transition-all ${className}`}
       />
     </div>
   );

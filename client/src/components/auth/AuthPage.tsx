@@ -104,7 +104,7 @@ export default function AuthPage() {
               id="password"
               placeholder="....."
               ref={passwordRef}
-              className="border-blue-900 focus:border-blue-800"
+              className="border-blue-950 hover:border-blue-800 focus:border-blue-800 "
             />
 
             <div className="flex gap-1 items-center mt-4">
@@ -122,7 +122,7 @@ export default function AuthPage() {
                 <Zap />
               </span>
               <span className="3xl:text-xl animate-pulse ">
-                {tab === "login" ? "ACESS SYSTEM" : "INITIALIZE ACCOUNT"}
+                {tab === "login" ? "ACCESS SYSTEM" : "INITIALIZE ACCOUNT"}
               </span>
               <span>
                 <Zap />
