@@ -6,7 +6,7 @@ export const getQuiz = (quizId: string): QuizRoom => {
     const quiz = QuizMemory.get(quizId);
 
     if (!quiz || quiz === undefined) {
-      throw new wsError("quiz not found ");
+      throw new wsError("quiz not found");
     }
 
     return quiz;

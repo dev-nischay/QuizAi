@@ -36,7 +36,7 @@ export const leaderboard = (socket: AuthWebSocket) => {
       data: leaderboard,
     };
 
-    wsSend(socket, response);
+    wsSend(quiz.hostConnection.ws!, response);
 
     broadCastMessage(quiz, response, { close: false });
     return;

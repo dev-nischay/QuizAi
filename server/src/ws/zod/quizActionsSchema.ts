@@ -15,7 +15,7 @@ export const showQuestionSchema = z.object({
 
 export const submitAnswerSchema = z.object({
   type: z.literal("SUBMIT_ANSWER"),
-  questionId: z.string().max(24, "invalid question Id"),
+  // questionId: z.string().max(24, "invalid question Id"),
   selectedOptionIndex: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
 });
 
