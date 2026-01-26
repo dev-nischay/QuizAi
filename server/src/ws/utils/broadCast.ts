@@ -11,14 +11,13 @@ export type CloseSockets = {
 export const broadCastMessage = (quiz: QuizRoom, response: ServerResponse, closeSocket: CloseSockets) => {
   const { close } = closeSocket;
 
-  for (let { ws } of quiz.users.values()) {
-    if (ws && ws?.readyState === ws?.OPEN) {
+  for (const { ws } of quiz.users.values()) {
+    if (ws && ws.readyState === ws.OPEN) {
       wsSend(ws, response);
 
       if (close) {
         ws.close(1000, closeSocket.message);
       }
-      return;
     } else {
       throw new wsError("socket not open", true);
     }
