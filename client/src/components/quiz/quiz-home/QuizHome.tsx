@@ -1,6 +1,6 @@
 export default function QuizHome() {
   return (
-    <div className="max-w-3xl mx-auto mt-32 h-[40rem] flex flex-col gap-10 items-center justify-center pb-24 p-5">
+    <div className="w-full   lg:px-4 lg:py-2 lg:max-w-3xl mx-auto mt-32 h-[40rem] flex flex-col gap-10 items-center justify-center pb-24 p-5">
       <div>
         <button className="uppercase bg-black text-lg font-black tracking-widest    rounded-xl   px-44 py-5 hover:scale-105 transition-all duration-100 hover:border ">
           create quiz
