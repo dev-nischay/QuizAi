@@ -2,7 +2,7 @@ import { Brain } from "lucide-react";
 import { Users2 } from "lucide-react";
 export default function LiveNavbar() {
   return (
-    <div className=" z-10 fixed inset-x-0 top-0 lg:relative w-full h-20 lg:h-28  border-b bg-black/50 border-b-emerald-950  flex justify-between  px-4 lg:pl-20 lg:pr-10">
+    <div className=" z-10  backdrop-blur-sm  fixed inset-x-0 top-0 max-w-8xl lg:relative w-full h-20 lg:h-24 border-b bg-black/50 border-b-emerald-950  flex justify-between  px-4 lg:pl-20 lg:pr-10">
       <div className=" flex items-center">
         <div className="flex gap-2 items-center ">
           <div className="bg-gradient-to-br from-emerald-600 via-teal-400 to-emerald-600  p-3 rounded-2xl   ">
