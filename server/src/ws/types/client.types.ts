@@ -13,7 +13,7 @@ export type ShowQuestionRequest = {
 
 export type SubmitAnswerRequest = {
   type: "SUBMIT_ANSWER";
-  questionId: string;
+  // questionId: string;
   selectedOptionIndex: 0 | 1 | 2 | 3;
 };
 
