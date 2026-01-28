@@ -33,7 +33,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="w-full lg:max-w-6xl 2xl:mt-44   mx-auto  grid grid-cols-1  lg:grid-cols-2   mt-28    ">
+    <div className="  w-full lg:max-w-6xl 2xl:mt-44   mx-auto  grid grid-cols-1  lg:grid-cols-2  mt-20 lg:mt-28    ">
       {/* Quiz Content Full Screen */}
       <div className=" hidden h-fit lg:flex w-full flex-col    p-2 gap-6   ">
         {/* logo */}
