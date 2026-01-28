@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { Edit2 } from "lucide-react";
-import type { QuestionPreviewProps } from "../../quiz.types";
+import type { Question, QuestionPreviewProps } from "../../quiz.types";
 export const QuestionPreview = ({
   options,
   correctOptionIndex,
@@ -9,11 +9,20 @@ export const QuestionPreview = ({
   quesControls,
   i,
   setEditing,
+  setEditQuestion,
 }: QuestionPreviewProps) => {
   const { removeQuestion } = quesControls;
 
   const handleEdit = (_id: string) => {
-    setEditing(true);
+    // const question = getQuestion(_id);
+
+    const question: Question = { _id, text, correctOptionIndex, options };
+    // handle undefined
+
+    if (question) {
+      setEditing(true);
+      setEditQuestion(question);
+    }
   };
 
   return (
