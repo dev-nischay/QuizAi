@@ -4,8 +4,7 @@ import Badge from "../quiz-live-components/Badge";
 import type { HostOptionProps, OptionIndex } from "../../quiz.types";
 import { useState } from "react";
 export default function HostActive() {
-  const [correctOptionIndex, setCorrectOptionIndex] = useState<OptionIndex>(0);
-  const [selctedOptionIndex, setSelctedOptionIndex] = useState<OptionIndex>(0);
+  const correctOptionIndex = 0;
   const [showAnswer, setShowAnswer] = useState(false);
   const options = [
     "Enforces stricter parsing and error handling",
