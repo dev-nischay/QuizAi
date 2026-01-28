@@ -3,7 +3,7 @@ import MainLayout from "./layout/mainLayout";
 import AuthPage from "./components/auth/AuthPage";
 import QuizHome from "./components/quiz/quiz-home/QuizHome";
 import QuizBuilderPage from "./components/quiz/quiz-build/QuizBuilderPage";
-
+import QuizLivePage from "./components/quiz/quiz-live/QuizLivePage";
 export default function App() {
   return (
     <BrowserRouter>
@@ -12,6 +12,7 @@ export default function App() {
           <Route index element={<AuthPage />} />
           <Route path="home" element={<QuizHome />} />
           <Route path="build" element={<QuizBuilderPage />} />
+          <Route path="live" element={<QuizLivePage />} />
         </Route>
       </Routes>
     </BrowserRouter>
