@@ -4,6 +4,7 @@ import AuthPage from "./components/auth/AuthPage";
 import QuizHome from "./components/quiz/quiz-home/QuizHome";
 import QuizBuilderPage from "./components/quiz/quiz-build/QuizBuilderPage";
 import QuizLivePage from "./components/quiz/quiz-live/QuizLivePage";
+import Error from "./components/globals/Error";
 export default function App() {
   return (
     <BrowserRouter>
@@ -13,6 +14,7 @@ export default function App() {
           <Route path="home" element={<QuizHome />} />
           <Route path="build" element={<QuizBuilderPage />} />
           <Route path="live" element={<QuizLivePage />} />
+          <Route path="*" element={<Error />} />
         </Route>
       </Routes>
     </BrowserRouter>
