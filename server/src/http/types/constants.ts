@@ -7,5 +7,5 @@ export type ApiResponse<T> = {
 export type ApiError = {
   success: false;
   error: string;
-  details?: {};
+  fieldErrors?: {};
 };

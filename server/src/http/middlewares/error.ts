@@ -11,7 +11,7 @@ export const error: ErrorRequestHandler = (err: unknown, req: Request, res: Resp
       return res.status(statusCode).json({
         success: false,
         error: err.message,
-        details: err.details,
+        fieldErrors: err.details,
       });
     }
     return res.status(statusCode).json({
