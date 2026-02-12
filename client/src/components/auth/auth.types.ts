@@ -6,11 +6,12 @@ export type loginInput = {
   password: string;
 };
 
-export type InputProps = {
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   placeholder: string;
   id: string;
   ref: React.RefObject<HTMLInputElement | null>;
   className?: HTMLProps<HTMLElement>["className"];
+  error?: string;
 };
 
 export type TabSwitcherProps = {
