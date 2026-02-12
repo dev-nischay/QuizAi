@@ -89,7 +89,7 @@ export const QuestionBuilder = ({
       <form onSubmit={handleSubmit}>
         <Input
           maxLength={140}
-          minLength={20}
+          minLength={6}
           id="question text"
           ref={questionRef}
           placeholder="Enter your question..."
