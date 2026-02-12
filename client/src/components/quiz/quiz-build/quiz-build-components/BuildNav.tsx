@@ -1,6 +1,6 @@
-import { Brain, Zap } from "lucide-react";
+import { Brain } from "lucide-react";
 
-export default function BuildNavbar({ questionsLength }: { questionsLength: number }) {
+export default function BuildNavbar({ children }: { children: React.ReactNode }) {
   return (
     <div className=" z-10 backdrop-blur-sm  fixed inset-x-0 top-0 lg:relative w-full h-20 lg:h-24  border-b bg-black/50 border-b-emerald-950  flex justify-between items-center  pl-4 pr-4 lg:pl-20 lg:pr-10 ">
       <div className="  flex items-center ">
@@ -21,15 +21,7 @@ export default function BuildNavbar({ questionsLength }: { questionsLength: numb
           </div>
         </div>
       </div>
-
-      {questionsLength > 0 && (
-        <button className="bg-gradient-to-br from-emerald-600 to-teal-600  px-5 py-3 lg:px-8 lg:py-3 rounded-xl text-xs lg:text-sm  font-bold uppercase flex items-center justify-center gap-2">
-          <span>
-            <Zap size={18} />
-          </span>
-          <span>publish quiz</span>
-        </button>
-      )}
+      {children}
     </div>
   );
 }

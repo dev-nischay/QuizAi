@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { X } from "lucide-react";
 import type { QuestionBuilderProps } from "../../quiz.types";
 import type { FormEvent } from "react";
+import Button from "../../../globals/Button";
 export const QuestionBuilder = ({
   setActive,
   quesControls,
@@ -86,7 +87,15 @@ export const QuestionBuilder = ({
 
       {/* Question title */}
       <form onSubmit={handleSubmit}>
-        <Input id="question text" ref={questionRef} placeholder="Enter your question..." className="mt-2 " />
+        <Input
+          maxLength={140}
+          minLength={20}
+          id="question text"
+          ref={questionRef}
+          placeholder="Enter your question..."
+          className="mt-2 "
+          error=""
+        />
 
         <div className=" mt-5 2xl:text-sm text-gray-400  uppercase tracking-wider  font-semibold">answer options</div>
 
@@ -111,9 +120,9 @@ export const QuestionBuilder = ({
         {/* bottom button layer */}
         <div className="flex gap-5  justify-end items-center mt-8 mb-10">
           <div className="flex-1">
-            <button
+            <Button
               type="submit"
-              className="w-full  bg-gradient-to-r hover:scale-105 text-sm lg:text-base transition-all   py-4 flex justify-center gap-2  font-extrabold   tracking-wider from-emerald-600 via-teal-600 to-emerald-600 "
+              className=" mt-0 w-full   hover:scale-105 text-sm lg:text-base transition-all   py-4 flex justify-center gap-2  font-extrabold   tracking-wider  "
             >
               {
                 <div className="hidden md:flex">
@@ -121,7 +130,7 @@ export const QuestionBuilder = ({
                 </div>
               }
               <div className="uppercase">{isEditing ? "update question" : "add quesiton"}</div>
-            </button>
+            </Button>
           </div>
 
           <div>
@@ -155,6 +164,7 @@ const Option = forwardRef<HTMLInputElement, OptionProps>(
           ref={ref}
           type="text"
           required
+          maxLength={40}
           className={`w-full  px-4 py-5 capitalize rounded-lg outline-none mt-1  ring-0 bg-black border border-emerald-950  placeholder:text-gray-500 focus:ring-2 flex justify-between transition-all hover:border-gray-500 ${
             optionIndex === selectedOption ? "border-emerald-400" : "border-gray-700"
           }`}
@@ -171,7 +181,7 @@ const Option = forwardRef<HTMLInputElement, OptionProps>(
         </button>
       </div>
     );
-  }
+  },
 );
 
 Option.displayName = "Option";
