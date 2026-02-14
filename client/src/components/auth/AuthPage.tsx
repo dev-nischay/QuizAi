@@ -1,11 +1,18 @@
 import { useRef, useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { Zap, Brain, Users, TrendingUp } from "lucide-react";
 import Feature from "./authComponents/Feature";
 import Badge from "./authComponents/Badge";
 import Input from "./authComponents/Input";
 import MobileLogo from "./authComponents/MobileLogo";
 import TabSwitcher from "./authComponents/TabSwitcher";
+import Button from "../globals/Button";
+import type { AuthFormData } from "./auth.types";
+import { useFormSubmit } from "../../hooks/form-submit";
+import { loginSchema, signupSchema } from "../../validation/auth-schema";
 export default function AuthPage() {
+  const { fieldErrors, validator, submitCount, setFieldErrors } = useFormSubmit<AuthFormData>();
+  const nav = useNavigate();
   const [tab, setTab] = useState<"login" | "signup">("login");
   let usernameRef = useRef<HTMLInputElement>(null);
   let emailRef = useRef<HTMLInputElement>(null);
@@ -13,21 +20,23 @@ export default function AuthPage() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    let username = usernameRef.current?.value;
-    let email = emailRef.current?.value;
-    let password = passwordRef.current?.value;
+    let username = usernameRef.current?.value || "";
+    let email = emailRef.current?.value || "";
+    let password = passwordRef.current?.value || "";
 
     if (tab === "signup") {
-      if (username && email && password) {
-        console.log({ username, email, password }); // logic
+      const isValid = validator({ username, email, password }, signupSchema);
+
+      if (isValid) {
+        setTab("login");
         usernameRef.current!.value = "";
       }
     } else {
-      if (email && password) {
-        console.log({ email, password });
+      const isValid = validator({ email, password }, loginSchema);
+      if (isValid) {
+        nav("/home");
       }
     }
-
     emailRef.current!.value = "";
     passwordRef.current!.value = "";
   };
@@ -91,20 +100,36 @@ export default function AuthPage() {
         <MobileLogo />
 
         {/* tab switcher */}
-        <TabSwitcher tab={tab} setTab={setTab} />
+        <TabSwitcher tab={tab} setTab={setTab} setFieldError={setFieldErrors} />
 
         {/* input area */}
         <div className="w-full mt-2 font-mono ">
-          <form onSubmit={handleSubmit} className="flex flex-col px-7 py-8 gap-2">
-            {tab == "signup" && <Input id="username" placeholder="eg.jackphin" ref={usernameRef} />}
+          <form onSubmit={handleSubmit} className="flex flex-col px-7 py-8 gap-7">
+            {tab === "signup" && (
+              <Input
+                id="username"
+                placeholder="eg.jackphin"
+                ref={usernameRef}
+                errCounter={submitCount}
+                error={fieldErrors?.username ?? ""}
+              />
+            )}
 
-            <Input id="email address" placeholder="name@example.com" ref={emailRef} />
+            <Input
+              id="email address"
+              placeholder="name@example.com"
+              ref={emailRef}
+              errCounter={submitCount}
+              error={fieldErrors?.email ?? ""}
+            />
 
             <Input
               id="password"
               placeholder="....."
               ref={passwordRef}
-              className="border-blue-950 hover:border-blue-800 focus:border-blue-800 "
+              className=" border border-blue-900 hover:border-blue-700 focus:border-blue-700 "
+              error={fieldErrors?.password ?? ""}
+              errCounter={submitCount}
             />
 
             <div className="flex gap-1 items-center mt-4">
@@ -114,10 +139,7 @@ export default function AuthPage() {
               </label>
             </div>
 
-            <button
-              className="bg-gradient-to-r mt-4   hover:scale-105 transition-all  flex justify-center gap-3  font-extrabold font-sans  tracking-wider from-emerald-600 via-teal-600 to-emerald-600 py-3 "
-              type="submit"
-            >
+            <Button type="submit" className="hover:scale-105">
               <span>
                 <Zap />
               </span>
@@ -127,7 +149,7 @@ export default function AuthPage() {
               <span>
                 <Zap />
               </span>
-            </button>
+            </Button>
           </form>
         </div>
       </div>
