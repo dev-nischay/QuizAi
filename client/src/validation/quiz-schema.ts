@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const createQuizSchema = z.object({
-  title: z.string().max(1000),
-  quizId: z.string().max(6),
+  title: z.string().trim().min(6, "quiz title must be descriptive").max(250, "quiz title too long"),
+  quizId: z.string().trim().max(6),
   questions: z.array(
     z.object({
-      text: z.string().max(150),
+      text: z.string().trim().max(150),
       options: z.tuple([z.string(), z.string(), z.string(), z.string()]),
       correctOptionIndex: z.union(
         [z.literal(0), z.literal(1), z.literal(2), z.literal(3)],

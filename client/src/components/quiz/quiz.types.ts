@@ -22,6 +22,12 @@ export type Question = {
   correctOptionIndex: 0 | 1 | 2 | 3;
 };
 
+export type QuizFormData = {
+  title: string;
+  quizId: string;
+  questions: Question[];
+};
+
 export type QuestionPreviewProps = Question & {
   quesControls: QuestionControls;
   i: number;
