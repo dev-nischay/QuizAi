@@ -4,13 +4,13 @@ import { type showQuestionBody, showQuestionSchema } from "../../zod/quizActions
 import { zodParser } from "../../zod/zodParser.js";
 import { getQuiz } from "../../utils/getQuiz.js";
 import { wsError } from "../../utils/wsError.js";
-import { wsSend } from "../../utils/wsSend.js";
 import { increment, QuizMemory } from "../../quiz.memory.js";
 import { CounterMemory } from "../../quiz.memory.js";
 import type { QuestionResponse, QuizCompleted } from "../../types/server.types.js";
 import { Quiz } from "../../../http/models/quiz.js";
 import { leaderboard } from "../leaderBoard.quiz.js";
 import { broadCastMessage } from "../../utils/broadCast.js";
+import { wsSend } from "../../utils/wsSend.js";
 export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionRequest) => {
   zodParser(message, showQuestionSchema) as showQuestionBody;
 
@@ -44,7 +44,7 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
 
     let currentQuestion = questions[CounterMemory];
 
-    if (!currentQuestion) throw new wsError("Question not found"); // not closing the  socket for now
+    if (!currentQuestion) throw new wsError("Question not found", true);
     increment();
 
     console.log(`Currently Showing Question${currentQuestion.text}`);
@@ -63,11 +63,12 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
     // creating current question entry in answered map
     quiz.answers.set(currentQuestion._id, new Map());
 
+    // sending current live question to host
+    wsSend(socket, response);
     // broadcasting current question to all the users
     broadCastMessage(quiz, response, { close: false });
   }
   leaderboard(socket);
   console.log(CounterMemory);
-
   return;
 };
