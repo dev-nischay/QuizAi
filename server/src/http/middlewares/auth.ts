@@ -14,13 +14,13 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || authHeader?.length === 0) {
-    return next(new AppError(" Auth Header not Found ", httpStatus.BadRequest));
+    return next(new AppError(" Auth Header not Found ", httpStatus.Unauthorized));
   }
 
   const token = authHeader.split(" ")[1];
 
   if (!token || token.length === 0) {
-    return next(new AppError("Token Not Found ", httpStatus.BadRequest));
+    return next(new AppError("Token Not Found ", httpStatus.Unauthorized));
   }
 
   try {
@@ -32,6 +32,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     next();
   } catch (error) {
     console.log(error);
-    return next(new AppError("Unauthorized, token missing or invalid", httpStatus.BadRequest));
+    return next(new AppError("Unauthorized, token missing or invalid", httpStatus.Unauthorized));
   }
 };

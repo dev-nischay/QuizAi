@@ -11,7 +11,7 @@ import { QuizMemory } from "../../ws/quiz.memory.js";
 export const createQuiz = async (
   req: Request,
   res: Response<ApiResponse<Pick<TQuiz, "title">>>,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   // saving quiz in db
 
@@ -22,7 +22,7 @@ export const createQuiz = async (
   const quizExists = await Quiz.findOne({ createdBy: userId });
 
   if (quizExists) {
-    return next(new AppError("quiz already exists", httpStatus.BadRequest));
+    return next(new AppError("quiz already exists", httpStatus.Conflict));
   }
 
   const quiz = await Quiz.create({ title, questions, createdBy: userId });
@@ -30,7 +30,7 @@ export const createQuiz = async (
   // adding quiz to websocket state
 
   if (QuizMemory.has(quizId)) {
-    return next(new AppError(`Room with id ${quizId} already exists`, httpStatus.BadRequest));
+    return next(new AppError(`Room with id ${quizId} already exists`, httpStatus.Conflict));
   }
 
   const Quesmap = new Map(
@@ -42,7 +42,7 @@ export const createQuiz = async (
         options: e.options,
         correctOptionIndex: e.correctOptionIndex,
       },
-    ])
+    ]),
   );
 
   QuizMemory.set(quizId, {
@@ -81,7 +81,7 @@ export const deleteQuiz = async (req: Request, res: Response<ApiResponse<DeleteQ
   const quiz = await Quiz.findOneAndDelete({ createdBy: userId, _id: quizId }, { new: true });
 
   if (!quiz) {
-    return next(new AppError("quiz not found", httpStatus.NotFound));
+    return next(new AppError("quiz not found", httpStatus.BadRequest));
   }
 
   return res.json({
@@ -100,7 +100,7 @@ export const getQuiz = async (req: Request, res: Response, next: NextFunction) =
   const quiz = await Quiz.find({ createdBy: userId }).select("-__v");
 
   if (!quiz || quiz.length === 0) {
-    return next(new AppError("quiz not found ", httpStatus.NotFound));
+    return next(new AppError("quiz not found ", httpStatus.BadRequest));
   }
 
   return res.json({

@@ -16,7 +16,7 @@ export const createAccount = async (req: Request, res: Response<ApiResponse<TUse
   const userExists = await User.findOne({ email });
 
   if (userExists) {
-    return next(new AppError("User with this email already exists", httpStatus.BadRequest));
+    return next(new AppError("User with this email already exists", httpStatus.Conflict));
   }
 
   const hashPass = await bcrypt.hash(password, 10);
@@ -40,19 +40,19 @@ export const createAccount = async (req: Request, res: Response<ApiResponse<TUse
 export const loginAccount = async (
   req: Request,
   res: Response<ApiResponse<Pick<TUser, "email" & "password">>>,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { email, password } = req.validatedBody as loginBody;
   const userExits = await User.findOne({ email });
 
   if (!userExits) {
-    return next(new AppError("user not found", httpStatus.NotFound));
+    return next(new AppError("user not found", httpStatus.BadRequest));
   }
 
   const compare = await bcrypt.compare(password, userExits.password);
 
   if (!compare) {
-    return next(new AppError("incorrect password", httpStatus.Unauthorized));
+    return next(new AppError("incorrect password", httpStatus.BadRequest));
   }
 
   if (secret) {
@@ -61,7 +61,7 @@ export const loginAccount = async (
         userId: userExits._id,
         username: userExits.username,
       },
-      secret
+      secret,
     );
 
     return res.json({
@@ -79,7 +79,7 @@ export const getAccount = async (req: Request, res: Response<ApiResponse<TUser>>
   const userInfo = (await User.findOne({ _id: userId }).select("username  email ")) as TUser;
 
   if (!userInfo) {
-    return next(new AppError("Unauthorized, user not found", httpStatus.BadRequest));
+    return next(new AppError("Unauthorized, user not found", httpStatus.Unauthorized));
   }
 
   return res.json({
