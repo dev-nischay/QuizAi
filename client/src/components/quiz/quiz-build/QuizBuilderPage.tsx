@@ -1,24 +1,80 @@
 import BuildNavbar from "./quiz-build-components/BuildNav";
 import Input from "../../auth/authComponents/Input";
 import { QuestionBuilder } from "./quiz-build-components/QuestionInput";
-import { Plus } from "lucide-react";
+import { Plus, Zap } from "lucide-react";
 import { useRef, useState } from "react";
 import { QuestionPreview } from "./quiz-build-components/QuestionPreview";
-import type { Question } from "../quiz.types";
+import type { Question, QuizFormData } from "../quiz.types";
 import { QuestionControls } from "./questionControls";
+import { useFormSubmit } from "../../../hooks/form-submit";
+import { createQuizSchema } from "../../../validation/quiz-schema";
+import { useMutation } from "@tanstack/react-query";
+import { submitQuiz } from "../../../services/postQuiz";
+import { useNavigate } from "react-router-dom";
+import { type ApiResponse, type ApiError } from "../../../services/api";
+import type { AxiosError } from "axios";
+import Loading from "../../globals/Loading";
 export default function QuizBuilderPage() {
   const titleRef = useRef<HTMLInputElement | null>(null);
+  const nav = useNavigate();
   const [active, setActive] = useState<boolean>(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isEditing, setEditing] = useState<boolean>(false);
   const [editQuestion, setEditQuestion] = useState<Question | null>(null);
+  let { validator, fieldErrors, submitCount, setFieldErrors } = useFormSubmit<QuizFormData>();
   const quesControls = new QuestionControls(questions, setQuestions);
+
+  const { isPending, mutate } = useMutation<
+    ApiResponse<QuizFormData>,
+    AxiosError<ApiError<QuizFormData>>,
+    QuizFormData
+  >({
+    mutationFn: submitQuiz,
+    onSuccess: () => {
+      nav("/live");
+      titleRef.current && (titleRef.current.value = "");
+
+      // might show a redirecting to live page modal later
+    },
+    onError: (err) => {
+      setFieldErrors(err.response?.data.fieldErrors);
+    },
+  });
+
+  const handleSubmit = () => {
+    let title = titleRef.current!.value || "";
+
+    const isValid = validator(
+      {
+        title,
+        quizId: "12345",
+        questions,
+      },
+      createQuizSchema,
+    );
+
+    if (isValid) mutate({ title, quizId: "12345", questions });
+  };
 
   console.log(questions);
 
+  if (isPending) return <Loading />;
+
   return (
     <div className="w-full min-h-screen  ">
-      <BuildNavbar questionsLength={questions.length} />
+      <BuildNavbar>
+        {questions.length > 0 && (
+          <button
+            onClick={handleSubmit}
+            className=" absolute right-2 bg-gradient-to-br hover:scale-110 from-emerald-600 to-teal-600  px-5 py-3 lg:px-8 lg:py-3 rounded-xl text-xs lg:text-sm  font-bold uppercase flex items-center justify-center gap-2 transition-all "
+          >
+            <span>
+              <Zap size={18} />
+            </span>
+            <span>publish quiz</span>
+          </button>
+        )}
+      </BuildNavbar>
       <div className="w-full mt-28 lg:mt-0  lg:max-w-6xl  mx-auto lg:px-4 lg:py-2 ">
         <div className=" bg-gradient-to-br from-gray-900 via-black rounded-xl border border-teal-900 to-slate-900  h-fit  p-4 pb-6 mt-8 ">
           <Input
@@ -26,6 +82,8 @@ export default function QuizBuilderPage() {
             ref={titleRef}
             placeholder="Enter your quiz title...."
             className="mt-3  text-lg font-bold"
+            error={fieldErrors?.title ?? ""}
+            errCounter={submitCount}
           />
         </div>
         <div className="mt-5 flex justify-between">
