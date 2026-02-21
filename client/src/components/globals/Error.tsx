@@ -1,6 +1,6 @@
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
 
-export default function Error({ message, onRetry }: { message: string; onRetry: boolean }) {
+export default function Error({ message = "Something went wrong" }: { message: string }) {
   return (
     <div className=" bg-black/60  flex items-center justify-center fixed inset-0 overflow-hidden">
       {/* Animated background */}
@@ -20,9 +20,7 @@ export default function Error({ message, onRetry }: { message: string; onRetry: 
 
             {/* Error Message */}
             <h2 className="text-3xl font-black text-white mb-3">Oops! Error Detected</h2>
-            <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto capitalize">
-              {message ?? "Something went wrong"}{" "}
-            </p>
+            <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto capitalize">{message}</p>
 
             {/* Error Code Display */}
             <div className="bg-black/50 border border-red-500/20 rounded-xl p-4 mb-8 font-mono text-red-400 text-sm ">

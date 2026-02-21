@@ -2,7 +2,7 @@ import { Brain } from "lucide-react";
 
 export default function Loading() {
   return (
-    <div className=" fixed inset-0  bg-black flex items-center justify-center  overflow-hidden">
+    <div className=" fixed inset-0  bg-black flex items-center justify-center  overflow-hidden ">
       {/* Animated background */}
 
       <div className="relative z-10 text-center">
@@ -36,7 +36,9 @@ export default function Loading() {
           ></div>
         </div>
 
-        <p className="text-gray-500 text-sm mt-6 font-mono capitalize tracking-wider">This won’t take long . . .</p>
+        <p className="text-gray-500  text-sm 2xl:text-md mt-6 font-mono capitalize tracking-wider">
+          This won’t take long . . .
+        </p>
       </div>
     </div>
   );
