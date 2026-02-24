@@ -1,8 +1,9 @@
 import BuildNavbar from "./quiz-build-components/BuildNav";
-import Input from "../../auth/authComponents/Input";
+import Input from "../../globals/Input";
+import { generateRoomCode } from "../../../utils/generateCode";
 import { QuestionBuilder } from "./quiz-build-components/QuestionInput";
 import { Plus, Zap } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QuestionPreview } from "./quiz-build-components/QuestionPreview";
 import type { Question, QuizFormData } from "../quiz.types";
 import { QuestionControls } from "./questionControls";
@@ -14,30 +15,39 @@ import { useNavigate } from "react-router-dom";
 import { type ApiResponse, type ApiError } from "../../../services/api";
 import type { AxiosError } from "axios";
 import Loading from "../../globals/Loading";
+import { QuizCreatedModal } from "../../modals/QuizCreatedModal";
+import Error from "../../globals/Error";
+import { useAuthStore } from "../../../store/authStore";
+
 export default function QuizBuilderPage() {
+  const token = useAuthStore((state) => state.token);
+
+  useEffect(() => {
+    if (!token) {
+      nav("/login");
+    }
+  }, []);
+
   const titleRef = useRef<HTMLInputElement | null>(null);
   const nav = useNavigate();
   const [active, setActive] = useState<boolean>(false);
+  const [isCreating, setCreating] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isEditing, setEditing] = useState<boolean>(false);
   const [editQuestion, setEditQuestion] = useState<Question | null>(null);
-  let { validator, fieldErrors, submitCount, setFieldErrors } = useFormSubmit<QuizFormData>();
+  let { validator, fieldErrors, submitCount, setFieldErrors, genericError, setGenericError } =
+    useFormSubmit<QuizFormData>();
   const quesControls = new QuestionControls(questions, setQuestions);
 
-  const { isPending, mutate } = useMutation<
-    ApiResponse<QuizFormData>,
-    AxiosError<ApiError<QuizFormData>>,
-    QuizFormData
-  >({
+  const { isPending, mutate, isError } = useMutation<ApiResponse<QuizFormData>, ApiError<QuizFormData>, QuizFormData>({
     mutationFn: submitQuiz,
     onSuccess: () => {
-      nav("/live");
+      setCreating(true);
       titleRef.current && (titleRef.current.value = "");
-
-      // might show a redirecting to live page modal later
     },
     onError: (err) => {
-      setFieldErrors(err.response?.data.fieldErrors);
+      setGenericError(err.error); // error:generic error
+      setFieldErrors(err.fieldErrors);
     },
   });
 
@@ -53,12 +63,26 @@ export default function QuizBuilderPage() {
       createQuizSchema,
     );
 
-    if (isValid) mutate({ title, quizId: "12345", questions });
+    if (isValid) {
+      mutate({ title, quizId: "12345", questions });
+    }
   };
 
   console.log(questions);
 
+  if (isCreating)
+    return (
+      <QuizCreatedModal
+        onClose={() => setCreating(false)}
+        questionCount={questions.length}
+        roomCode={"123445"}
+        onGoToLobby={() => nav("/live")}
+      />
+    );
+
   if (isPending) return <Loading />;
+
+  if (isError) return <Error message={genericError} />;
 
   return (
     <div className="w-full min-h-screen  ">
