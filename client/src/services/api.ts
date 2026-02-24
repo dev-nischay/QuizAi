@@ -1,6 +1,7 @@
 import axios from "axios";
 const baseUrl = import.meta.env.VITE_API_URL;
-
+import NotFoundPage from "../components/globals/NotFoundPage";
+import { useAuthStore } from "../store/authStore";
 if (!baseUrl) {
   console.log("url not found");
 }
@@ -20,12 +21,14 @@ export type ApiResponse<T> = {
 export const api = axios.create({
   baseURL: baseUrl,
   timeout: 5000,
-  withCredentials: true,
+  withCredentials: false,
 });
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken");
+    const header = localStorage.getItem("Authorization");
+
+    const token = header?.split(" ")[1];
 
     if (token && String(token).length > 0) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -39,10 +42,14 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(response);
+    return response;
+  },
   async (error) => {
     const status: number = error.response?.status;
     const errorBody = error.response?.data;
+    console.log(errorBody);
 
     switch (status) {
       case 400:
@@ -57,8 +64,8 @@ api.interceptors.response.use(
       case 401:
         // can display modal with unauthorized error
         console.log("Unauthorized");
-        localStorage.removeItem("acessToken");
-        window.location.href = "/login";
+        localStorage.clear();
+        window.location.href = "/";
         break;
 
       case 409:
@@ -70,6 +77,8 @@ api.interceptors.response.use(
         }
         break;
       case 404:
+        console.log(errorBody);
+        return (window.location.href = "/*");
         // display the 404 page
         break;
       case 500:
