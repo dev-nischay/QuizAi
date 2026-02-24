@@ -4,6 +4,7 @@ import type { ZodType } from "zod";
 export const useFormSubmit = <T>() => {
   const [fieldErrors, setFieldErrors] = useState<T>();
   const [submitCount, setSubmitCount] = useState(0);
+  const [genericError, setGenericError] = useState("");
   const validator = (data: T, schema: ZodType) => {
     const result = schema.safeParse(data);
     if (!result.success) {
@@ -18,13 +19,14 @@ export const useFormSubmit = <T>() => {
     }
 
     return true;
-    // fetch
   };
 
   return {
     validator,
     fieldErrors,
+    genericError,
     submitCount,
     setFieldErrors,
+    setGenericError,
   };
 };
