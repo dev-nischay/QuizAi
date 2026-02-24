@@ -12,7 +12,7 @@ export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   ref: React.RefObject<HTMLInputElement | null>;
   className?: HTMLProps<HTMLElement>["className"];
   error?: string;
-  errCounter: number;
+  errCounter?: number;
 };
 
 export type TabSwitcherProps<T> = {

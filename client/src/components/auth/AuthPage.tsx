@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Zap, Brain, Users, TrendingUp } from "lucide-react";
 import Feature from "./authComponents/Feature";
 import Badge from "./authComponents/Badge";
-import Input from "./authComponents/Input";
+import Input from "../globals/Input";
 import MobileLogo from "./authComponents/MobileLogo";
 import TabSwitcher from "./authComponents/TabSwitcher";
 import Button from "../globals/Button";
@@ -19,6 +19,8 @@ import type { AxiosError } from "axios";
 import { type ApiResponse, type ApiError } from "../../services/api";
 
 export default function AuthPage() {
+  const { fieldErrors, validator, submitCount, setFieldErrors, genericError, setGenericError } =
+    useFormSubmit<AuthFormData>();
   const setUsername = useAuthStore((state) => state.setUsername);
   const setToken = useAuthStore((state) => state.setToken);
   const nav = useNavigate();
@@ -27,7 +29,7 @@ export default function AuthPage() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  const signupMutation = useMutation<ApiResponse<AuthFormData>, AxiosError<ApiError<AuthFormData>>, AuthFormData>({
+  const signupMutation = useMutation<ApiResponse<AuthFormData>, ApiError<AuthFormData>, AuthFormData>({
     mutationFn: createAccount,
     onSuccess: (_data, { username }) => {
       setUsername(username ?? "");
@@ -35,27 +37,33 @@ export default function AuthPage() {
       usernameRef.current && (usernameRef.current.value = "");
     },
     onError: (err) => {
-      setFieldErrors(err.response?.data.fieldErrors);
+      console.log(err);
+
+      setFieldErrors(err.fieldErrors);
+      setGenericError(err.error);
     },
   });
 
-  const loginMutation = useMutation<ApiResponse<{ token: string }>, AxiosError<ApiError<AuthFormData>>, AuthFormData>({
+  const loginMutation = useMutation<
+    ApiResponse<{ token: string; username: string }>,
+    ApiError<AuthFormData>,
+    AuthFormData
+  >({
     mutationFn: loginAccount,
     onSuccess: ({ data }) => {
       const token = data?.token;
+      const username = data?.username;
       if (token) setToken(token);
+      if (username) setUsername(username);
       nav("/home");
       passwordRef.current && (passwordRef.current.value = "");
       emailRef.current && (emailRef.current.value = "");
     },
     onError: (err) => {
-      setFieldErrors(err.response?.data.fieldErrors);
-
-      // only setting field errors as there would be no point in using generic error
+      setFieldErrors(err.fieldErrors);
+      setGenericError(err.error);
     },
   });
-
-  const { fieldErrors, validator, submitCount, setFieldErrors } = useFormSubmit<AuthFormData>();
 
   const isPending = signupMutation.isPending || loginMutation.isPending;
 
@@ -91,11 +99,11 @@ export default function AuthPage() {
                 <span className="bg-gradient-to-r tracking-tight from-emerald-500 via-teal-300 to bg-emerald-500 bg-clip-text text-transparent ">
                   Quiz
                 </span>
-                <span className="text-white">AI</span>
+                <span className="text-white">Live</span>
               </div>
               <div className="flex items-center gap-2 ">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                <p className="text-sm text-gray-400 font-mono">AI-POWERED SYSTEM ONLINE</p>
+                <p className="text-sm text-gray-400 font-mono capitiablize">Live Collabrative Platform</p>
               </div>
             </div>
           </div>
@@ -105,8 +113,7 @@ export default function AuthPage() {
             <div className="absolute border border-emerald-800 bg-white inset-y-0 -left-8"></div>
             <div className="text-2xl font-bold">The Future of Learning</div>
             <div className="text-gray-400 tracking-wide">
-              Experience next-generation quiz creation powered by aritifical intelligence. Create, compete, and conquer
-              with cutting-edge technology.
+              Experience next-generation quiz creation powered by Web Sockets. Create, compete, and conquer.
             </div>
           </div>
 
@@ -118,8 +125,8 @@ export default function AuthPage() {
           </div>
 
           {/* features */}
-          <Feature Icon={Zap} title="Instant Generation" text="AI creates quizzes in milliseconds" />
-          <Feature Icon={Users} title="Real-time Multiplayer" text="Complete with players worldwide" />
+          <Feature Icon={Zap} title="Instant Creation" text="creates quizzes in seconds" />
+          <Feature Icon={Users} title="Real-time Multiplayer" text="Complete with players" />
           <Feature Icon={TrendingUp} title="Advanced Analytics" text="Track perfomance with AI insights" />
         </div>
 
@@ -168,11 +175,16 @@ export default function AuthPage() {
                 errCounter={submitCount}
               />
 
-              <div className="flex gap-1 items-center mt-4">
+              <div className="flex gap-1 relative   items-center mt-4">
                 <input type="checkbox" className="size-4" />
                 <label htmlFor="check" className="text-sm text-gray-400   tracking-wider  font-semibold ">
                   Remebmer me
                 </label>
+                {genericError.length > 0 && (
+                  <div className="absolute  inset-0 pointer-events-none ">
+                    <div className="text-center  text-red-500">user not found</div>
+                  </div>
+                )}
               </div>
 
               <Button type="submit" className="hover:scale-105">
