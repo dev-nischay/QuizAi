@@ -1,7 +1,9 @@
 // for redirecting guest to main lobby
 import { useState, useEffect } from "react";
 import { X, Users } from "lucide-react";
-export function JoinRoomModal({ roomCode, onClose, onJoin }) {
+import type { JoinQuizModalProps } from "./modal.types";
+
+export function JoinQuizModal({ roomCode, onClose, onJoin }: JoinQuizModalProps) {
   const [countdown, setCountdown] = useState(5);
   const [isJoining, setIsJoining] = useState(false);
 

@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { Check, Copy, Radio, X } from "lucide-react";
-export function QuizCreatedModal({ roomCode, questionCount, onClose, onGoToLobby }) {
-  const [copied, setCopied] = useState(false);
+import type { QuizCreateModalProps } from "./modal.types";
 
+export function QuizCreatedModal({ roomCode, questionCount, onClose, onGoToLobby }: QuizCreateModalProps) {
+  const [copied, setCopied] = useState(false);
   const copyRoomCode = () => {
     navigator.clipboard.writeText(roomCode);
     setCopied(true);
