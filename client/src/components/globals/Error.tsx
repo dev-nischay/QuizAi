@@ -1,6 +1,8 @@
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Error({ message = "Something went wrong" }: { message: string }) {
+  const nav = useNavigate();
   return (
     <div className=" bg-black/60  flex items-center justify-center fixed inset-0 overflow-hidden">
       {/* Animated background */}
@@ -31,14 +33,16 @@ export default function Error({ message = "Something went wrong" }: { message: s
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button className="relative group overflow-hidden px-8 py-4 rounded-xl">
                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
-                <div className="relative font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2">
-                  <RefreshCw className="w-5 h-5" />
-                  Try Again
+                <div
+                  onClick={() => nav(-1)}
+                  className="relative font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2"
+                >
+                  Back
                 </div>
               </button>
 
               <button
-                onClick={() => (window.location.href = "/")}
+                onClick={() => nav("/")}
                 className="px-8 py-4 bg-gray-800/50 border border-gray-700 rounded-xl hover:bg-gray-800 transition-all text-white font-bold uppercase tracking-wider flex items-center justify-center gap-2"
               >
                 <Home className="w-5 h-5" />
