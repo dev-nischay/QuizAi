@@ -1,6 +1,7 @@
 import type { AuthWebSocket } from "../types/ws.types.js";
 import { startQuiz } from "../quiz/hostControls/start.quiz.js";
 import { showQuestion } from "../quiz/hostControls/question.quiz.js";
+import { stopQuiz } from "../quiz/hostControls/stop.quiz.js";
 import type { ClientResponse } from "../types/client.types.js";
 import { wsError } from "../utils/wsError.js";
 import { isOpen } from "../utils/isOpen.js";
@@ -32,6 +33,10 @@ export const hostRouter = async (socket: AuthWebSocket, message: ClientResponse)
         type: "RESPONSE",
         message: "This feature will be available soon",
       });
+      break;
+
+    case "STOP_QUIZ":
+      await stopQuiz(socket, message);
       break;
 
     default:

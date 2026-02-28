@@ -11,6 +11,10 @@ export type ShowQuestionRequest = {
   type: "SHOW_QUESTION";
 };
 
+export type StopQuizRequest = {
+  type: "STOP_QUIZ";
+};
+
 export type SubmitAnswerRequest = {
   type: "SUBMIT_ANSWER";
   // questionId: string;
@@ -31,4 +35,5 @@ export type ClientResponse =
   | ShowQuestionRequest
   | SubmitAnswerRequest
   | ShowResultRequest
-  | StartMessageRequest;
+  | StartMessageRequest
+  | StopQuizRequest;

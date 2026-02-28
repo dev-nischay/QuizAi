@@ -11,6 +11,11 @@ export type StartResponse = {
   message: string;
 };
 
+export type StopQuizResponse = {
+  type: "QUIZ_STOPPED";
+  message: string;
+};
+
 export type QuestionResponse = Pick<Question, "text" | "options"> & {
   type: "QUESTION";
   quizId: string;
@@ -69,4 +74,5 @@ export type ServerResponse =
   | LeaderboardUpdates
   | QuizCompleted
   | GeneralResponse
-  | LobbyUpdates;
+  | LobbyUpdates
+  | StopQuizResponse;
