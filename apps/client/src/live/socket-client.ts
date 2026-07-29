@@ -1,6 +1,7 @@
 import type { ClientResponse, ServerResponse } from "@common/contracts";
 
 import { messageRouter } from "./router";
+import { resetQuizState } from "../utils/resetQuizState";
 const baseUrl = import.meta.env.VITE_API_URL;
 
 export class SocketControls {
@@ -25,17 +26,20 @@ export class SocketControls {
 
     this.ws.onclose = (event) => {
       console.log(`Socket closed: ${event.reason}`);
+      this.ws = null;
+      resetQuizState();
+
       // Logic for auto-reconnect would go here
     };
 
     this.ws.onerror = (error) => {
       console.error("WebSocket Error:", error);
+      // toast error
     };
   };
 
   disconnect = () => {
-    this.ws?.close(1000, "Normal Closure"); // 1008 is "Policy Violation", 1000 is cleaner
-    this.ws = null;
+    this.ws?.close(1000, "Normal Closure User disconnected");
   };
 
   sendMessage = (data: ClientResponse) => {

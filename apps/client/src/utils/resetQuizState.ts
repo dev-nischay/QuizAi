@@ -12,4 +12,5 @@ export const resetQuizState = () => {
   resetRoomCode();
   window.location.replace("/home");
   // local storage cleanup + redirecting user back to home
+  // for now redirecting user later we would user toast for ux and countdown for redirecting user to the home page for better ux
 };

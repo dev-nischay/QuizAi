@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { useLiveStore } from "../../../store/liveStore";
 import { socketService } from "../../../live/socket-client";
 import { useRoomStore } from "../../../store/roomStore";
-import { resetQuizState } from "../../../utils/resetQuizState";
 export default function QuizLivePage() {
   const phase = useLiveStore((state) => state.phase);
   const liveUsers = useLiveStore((state) => state.liveUsers);
@@ -32,8 +31,6 @@ export default function QuizLivePage() {
 
     return () => {
       socketService.disconnect();
-
-      resetQuizState();
     };
   }, []);
 
