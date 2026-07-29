@@ -36,4 +36,5 @@ export type ClientResponse =
   | SubmitAnswerRequest
   | ShowResultRequest
   | StartQuizRequest
-  | StopQuizRequest;
+  | StopQuizRequest
+  | LeaverQuizRequest;

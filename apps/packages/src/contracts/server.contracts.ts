@@ -81,6 +81,10 @@ export type BroadCast = {
   type: "BROADCAST";
   message: string;
 };
+export type LeaveResponse = {
+  type: "USER_LEFT";
+  message: string;
+};
 
 export type ServerResponse =
   | JoinResponse
@@ -94,4 +98,5 @@ export type ServerResponse =
   | GeneralResponse
   | LobbyUpdates
   | StopQuizResponse
-  | BroadCast;
+  | BroadCast
+  | LeaveResponse;
