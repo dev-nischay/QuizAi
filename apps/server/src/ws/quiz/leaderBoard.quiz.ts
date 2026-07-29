@@ -1,22 +1,10 @@
 // check for all the validation then send data in <name,score>
-import { getQuiz } from "../utils/getQuiz.js";
-import { isOpen } from "../utils/isOpen.js";
-import type { AuthWebSocket } from "../types/ws.types.js";
-import { isHost } from "../utils/validateRole.js";
-import { wsError } from "../utils/wsError.js";
 import { wsSend } from "../utils/wsSend.js";
 import type { LeaderBoard } from "../types/ws.types.js";
 import type { LeaderboardUpdates } from "@common/contracts";
 import { broadCastMessage } from "../utils/broadCast.js";
-export const leaderboard = (socket: AuthWebSocket) => {
-  const { quizId, userId, role } = socket.user;
-
-  const quiz = getQuiz(quizId);
-
-  if (role !== "host" || !isHost(userId, quizId) || !isOpen(socket)) {
-    throw new wsError("Unauthorized", true);
-  }
-
+import type { QuizRoom } from "../quiz.memory.js";
+export const leaderboard = (quiz: QuizRoom) => {
   const leaderboard: LeaderBoard[] = [];
 
   if (quiz.users.size > 0) {

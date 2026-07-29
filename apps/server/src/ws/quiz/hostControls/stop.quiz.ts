@@ -9,7 +9,7 @@ import { QuizMemory } from "../../quiz.memory.js";
 import { Quiz } from "../../../http/models/quiz.js";
 export const stopQuiz = async (socket: AuthWebSocket, message: StopQuizRequest) => {
   zodParser(message, stopQuizSchema) as stopBody;
-  const { userId, quizId } = socket.user;
+  const { quizId } = socket.user;
 
   const quiz = getQuiz(quizId);
   const hostsocket = quiz.hostConnection.ws;
@@ -19,11 +19,8 @@ export const stopQuiz = async (socket: AuthWebSocket, message: StopQuizRequest) 
     message: "quiz stopped early by host",
   };
 
-  broadCastMessage(quiz, response, { close: true, message: "quiz ended early by the host" });
-
   hostsocket?.close(1000, "quiz finished early");
-
-  QuizMemory.delete(quizId); // quiz removed from memory
-  await Quiz.findOneAndDelete({ createdBy: userId });
+  quiz.hostConnection.ws = null;
+  broadCastMessage(quiz, response, { close: true, message: "quiz ended early by the host" });
   return;
 };

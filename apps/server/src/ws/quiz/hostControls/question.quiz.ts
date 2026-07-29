@@ -27,19 +27,17 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
     if (quiz.questionIndex >= questions.length) {
       const hostsocket = quiz.hostConnection.ws;
 
-      leaderboard(socket);
+      leaderboard(quiz);
       const response: QuizCompleted = {
         type: "QUIZ_COMPLETED",
         message: "quiz is finished",
       };
-
       wsSend(hostsocket, response);
-      broadCastMessage(quiz, response, { close: true, message: "quiz ended" });
-      hostsocket?.close(1000, "quiz is finished");
 
-      QuizMemory.delete(quizId); // quiz removed from memory
-      await Quiz.findOneAndDelete({ createdBy: userId });
-      return; // quiz removed from db
+      hostsocket?.close(1000, "quiz is finished");
+      quiz.hostConnection.ws = null;
+      broadCastMessage(quiz, response, { close: true, message: "quiz ended" });
+      return;
     }
 
     let currentQuestion = questions[quiz.questionIndex];
@@ -75,7 +73,7 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
     // broadcasting current question to all the users
     broadCastMessage(quiz, response, { close: false });
   }
-  leaderboard(socket);
+  leaderboard(quiz);
   console.log(quiz.questionIndex);
   return;
 };

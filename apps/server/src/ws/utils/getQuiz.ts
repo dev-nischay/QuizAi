@@ -1,5 +1,5 @@
 import { QuizMemory } from "../quiz.memory.js";
-import type { QuizRoom } from "../types/ws.types.js";
+import type { QuizRoom } from "../quiz.memory.js";
 import { wsError } from "./wsError.js";
 export const getQuiz = (quizId: string): QuizRoom => {
   if (typeof quizId === "string" && QuizMemory.has(quizId)) {

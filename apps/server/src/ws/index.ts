@@ -10,6 +10,7 @@ export const initWebSocket = (server: Server) => {
   wss.on("connection", async (socket: AuthWebSocket, req) => {
     try {
       handleUser(socket, req);
+      return;
     } catch (error) {
       await handleError(socket, error);
     }
@@ -17,14 +18,16 @@ export const initWebSocket = (server: Server) => {
     socket.on("message", async (rawData: RawData) => {
       try {
         await handleMessage(socket, rawData);
+        return;
       } catch (error) {
         await handleError(socket, error);
       }
     });
 
-    socket.on("close", async () => {
+    socket.on("close", async (code, reason) => {
       try {
-        await handleClose(socket);
+        await handleClose(socket, { code, reason: String(reason) });
+        return;
       } catch (error) {
         await handleError(socket, error);
       }
