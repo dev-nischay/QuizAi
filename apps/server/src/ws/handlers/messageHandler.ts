@@ -10,7 +10,8 @@ export const handleMessage = async (socket: AuthWebSocket, raw: RawData) => {
     throw new wsError("Socket Connection Failed", true);
   }
 
-  const response: ClientResponse = JSON.parse(String(raw));
+  const string = String(raw);
+  const response: ClientResponse = JSON.parse(string);
   switch (socket.user.role) {
     case "guest":
       await guestRouter(socket, response);

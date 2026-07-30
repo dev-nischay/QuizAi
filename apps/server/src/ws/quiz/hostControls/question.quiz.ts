@@ -33,10 +33,7 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
         message: "quiz is finished",
       };
       wsSend(hostsocket, response);
-
-      hostsocket?.close(1000, "quiz is finished");
-      quiz.hostConnection.ws = null;
-      broadCastMessage(quiz, response, { close: true, message: "quiz ended" });
+      hostsocket?.close(1000, JSON.stringify(response));
       return;
     }
 

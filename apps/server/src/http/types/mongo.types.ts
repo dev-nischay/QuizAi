@@ -1,6 +1,6 @@
 import type { Date, Mongoose } from "mongoose";
 import type mongoose from "mongoose";
-import type { Question } from "../../types/global.types.js";
+import type { Question } from "@common/contracts";
 
 export type TQuiz = {
   title: string;

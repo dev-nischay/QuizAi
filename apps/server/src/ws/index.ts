@@ -8,9 +8,9 @@ import { handleClose } from "./handlers/closeHandler.js";
 export const initWebSocket = (server: Server) => {
   const wss = new WebSocketServer({ server });
   wss.on("connection", async (socket: AuthWebSocket, req) => {
+    console.log("connected");
     try {
       handleUser(socket, req);
-      return;
     } catch (error) {
       await handleError(socket, error);
     }
@@ -18,7 +18,6 @@ export const initWebSocket = (server: Server) => {
     socket.on("message", async (rawData: RawData) => {
       try {
         await handleMessage(socket, rawData);
-        return;
       } catch (error) {
         await handleError(socket, error);
       }
@@ -27,7 +26,6 @@ export const initWebSocket = (server: Server) => {
     socket.on("close", async (code, reason) => {
       try {
         await handleClose(socket, { code, reason: String(reason) });
-        return;
       } catch (error) {
         await handleError(socket, error);
       }

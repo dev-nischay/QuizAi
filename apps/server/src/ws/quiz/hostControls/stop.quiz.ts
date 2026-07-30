@@ -7,20 +7,20 @@ import { getQuiz } from "../../utils/getQuiz.js";
 import type { StopQuizResponse } from "@common/contracts";
 import { QuizMemory } from "../../quiz.memory.js";
 import { Quiz } from "../../../http/models/quiz.js";
+import { wsSend } from "../../utils/wsSend.js";
 export const stopQuiz = async (socket: AuthWebSocket, message: StopQuizRequest) => {
   zodParser(message, stopQuizSchema) as stopBody;
   const { quizId } = socket.user;
 
   const quiz = getQuiz(quizId);
-  const hostsocket = quiz.hostConnection.ws;
+  const hostsocket = quiz.hostConnection.ws!;
 
   const response: StopQuizResponse = {
     type: "QUIZ_STOPPED",
     message: "quiz stopped early by host",
   };
 
-  hostsocket?.close(1000, "quiz finished early");
-  quiz.hostConnection.ws = null;
-  broadCastMessage(quiz, response, { close: true, message: "quiz ended early by the host" });
+  wsSend(hostsocket, response);
+  hostsocket.close(1000, JSON.stringify(response));
   return;
 };

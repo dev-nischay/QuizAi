@@ -3,10 +3,10 @@ import { getQuiz } from "../utils/getQuiz.js";
 import { Quiz } from "../../http/models/quiz.js";
 import { QuizMemory } from "../quiz.memory.js";
 import type { QuizRoom } from "../quiz.memory.js";
-import type { StopQuizResponse } from "@common/contracts";
 import { broadCastMessage } from "../utils/broadCast.js";
 import { lobbyUpdates } from "../quiz/lobby.quiz.js";
 import { leaderboard } from "../quiz/leaderBoard.quiz.js";
+import type { ServerResponse } from "@common/contracts";
 export const handleClose = async (socket: AuthWebSocket, details: { code: number; reason: string }) => {
   const { quizId, userId, role } = socket.user;
   const quiz: QuizRoom = getQuiz(quizId);
@@ -14,47 +14,45 @@ export const handleClose = async (socket: AuthWebSocket, details: { code: number
   if (quizId.length > 0 && userId.length > 0) {
     switch (role) {
       case "guest":
+        const user = quiz?.users.get(userId);
         if (quiz?.users.has(userId) && quiz?.users.size > 0 && quiz.hostConnection.ws) {
-          const user = quiz?.users.get(userId);
           quiz.users.delete(userId);
           quiz.answers.delete(userId);
           lobbyUpdates(quiz);
           leaderboard(quiz);
           console.log(`user : ${user?.name} left quiz :${quizId}`);
-          return;
+          return; // for guest leaving but quiz is running
+        } else if (quiz?.users.size > 1 && quiz?.users.has(userId)) {
+          quiz.users.delete(userId);
+          console.log(`${user?.name} has been removed `);
+          return; // kicking user one by one after the host has left
         } else {
-          // socket.user.quizId = "";
-          // socket.user.userId = "";
-
+          console.log(`${user?.name} last memeber has been removed `);
           QuizMemory.delete(quizId);
-          await Quiz.findOneAndDelete({ createdBy: userId });
+          await Quiz.findOneAndDelete({ createdBy: quiz.host });
           console.log("quiz removed from memory closure handled gracefully");
-          return;
+          // room is removed when the last user disconnects
         }
         break;
 
       case "host":
         if (quiz.host === userId) {
           quiz.hostConnection.ws = null;
+          console.log(details.reason);
+          const response = JSON.parse(details.reason) as ServerResponse;
 
-          const response: StopQuizResponse = {
-            type: "QUIZ_STOPPED",
-            message: "host has been disconnected\n redirecting to join page",
-          };
-
-          broadCastMessage(quiz, response, { close: true, message: "quiz ended abrubtly due to host disconnection" });
+          broadCastMessage(quiz, response, { close: true, message: "quiz ended" });
           console.log("host disconnected closing room ....");
-          return;
+
+          if (quiz.users.size < 1) {
+            console.log("deletetion ran");
+            QuizMemory.delete(quizId);
+            await Quiz.findOneAndDelete({ createdBy: userId });
+            return;
+          }
         }
         break;
-
-      default:
-        break;
     }
-  } else {
   }
 };
-
 // needs to be tested
-
-// normal closure (quiz ended early / completed ) , unexpected closure (host disconnected)
