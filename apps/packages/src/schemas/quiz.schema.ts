@@ -6,7 +6,6 @@ export const createQuizSchema = z.object({
     .trim()
     .min(6, "quiz title must be descriptive")
     .max(250, "quiz title too long"),
-  quizId: z.string("quizId not found").trim().max(6),
   questions: z.array(
     z.object({
       text: z.string("question cannot be empty").trim().max(150),
@@ -32,5 +31,10 @@ export const updateQuizSchema = z.object({
     .optional(),
 });
 
+export const checkQuizSchema = z.object({
+  roomCode: z.string().max(6),
+});
+
 export type createQuizBody = z.infer<typeof createQuizSchema>;
 export type updateQuizBody = z.infer<typeof updateQuizSchema>;
+export type checkQuizBody = z.infer<typeof checkQuizSchema>;
