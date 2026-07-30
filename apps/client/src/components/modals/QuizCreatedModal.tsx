@@ -5,27 +5,22 @@ import { Check, Copy, Radio, X } from "lucide-react";
 import type { QuizCreateModalProps } from "./modal.types";
 import { useMutation } from "@tanstack/react-query";
 import type { ApiResponse, ApiError } from "../../services/api";
-import type { QuizFormData } from "../quiz/quiz.types";
+import type { QuizFormData, QuizResponse } from "../quiz/quiz.types";
 import Loading from "../globals/Loading";
 import Error from "../globals/Error";
 import { submitQuiz } from "../../services/postQuiz";
 import { useNavigate } from "react-router-dom";
 import { useRoomStore } from "../../store/roomStore";
-export function QuizCreatedModal({ roomCode, questionCount, onClose, quizData }: QuizCreateModalProps) {
-  const [copied, setCopied] = useState(false);
+export function QuizCreatedModal({ questionCount, onClose, quizData }: QuizCreateModalProps) {
   const nav = useNavigate();
   const setRoomCode = useRoomStore((state) => state.setRoomCode);
-  const copyRoomCode = () => {
-    navigator.clipboard.writeText(roomCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const [genericError, setGenericError] = useState("");
 
-  const { isPending, mutate, isError } = useMutation<ApiResponse<QuizFormData>, ApiError<QuizFormData>, QuizFormData>({
+  const { isPending, mutate, isError } = useMutation<ApiResponse<QuizResponse>, ApiError<QuizFormData>, QuizFormData>({
     mutationFn: submitQuiz,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      const roomCode = response.data!.roomCode;
       setRoomCode(roomCode);
       nav("/live");
     },
@@ -35,7 +30,7 @@ export function QuizCreatedModal({ roomCode, questionCount, onClose, quizData }:
   });
 
   const createQuiz = () => {
-    mutate({ ...quizData, quizId: roomCode });
+    mutate({ ...quizData });
   };
 
   if (isPending) return <Loading />;
@@ -83,17 +78,12 @@ export function QuizCreatedModal({ roomCode, questionCount, onClose, quizData }:
               <div className="text-xs text-gray-500 font-mono uppercase tracking-wider mb-3">Room Code</div>
               <div className="flex items-center justify-center gap-4">
                 <div className=" text-3xl  lg:text-5xl font-black tracking-widest">
-                  <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 bg-clip-text text-transparent">
-                    {roomCode}
-                  </span>
+                  <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 bg-clip-text text-transparent"></span>
                 </div>
                 <button
-                  onClick={copyRoomCode}
                   className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl hover:bg-emerald-500/20 transition-all text-emerald-400"
                   title="Copy room code"
-                >
-                  {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                </button>
+                ></button>
               </div>
             </div>
 

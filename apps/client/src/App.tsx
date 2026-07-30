@@ -17,12 +17,14 @@ export default function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<AuthPage />} />
+
             <Route element={<WithAuth />}>
               <Route path="home" element={<QuizHome />} />
               <Route path="build" element={<QuizBuilderPage />} />
               <Route path="live" element={<QuizLivePage />} />
-              <Route path="*" element={<NotFoundPage />} />
             </Route>
+
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </QueryClientProvider>

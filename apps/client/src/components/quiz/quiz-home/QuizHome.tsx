@@ -1,4 +1,4 @@
- import { useState } from "react";
+import { useState } from "react";
 import Button from "../../globals/Button";
 import JoinQuiz from "./quiz-home-components/JoinRoom";
 

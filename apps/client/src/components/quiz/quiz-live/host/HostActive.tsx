@@ -8,8 +8,11 @@ import { useLiveStore } from "../../../../store/liveStore";
 import { endQuiz } from "../../../../live/handlers/host/stopQuiz";
 import { showQuestion } from "../../../../live/handlers/host/showQuestion";
 import { socketService } from "../../../../live/socket-client";
+import { useShallow } from "zustand/shallow";
 export default function HostActive() {
-  const [currentQuestion, quizDetails] = useLiveStore((state) => [state.currentQuestion, state.quizDetails]);
+  const [currentQuestion, quizDetails] = useLiveStore(
+    useShallow((state) => [state.currentQuestion, state.quizDetails]),
+  );
 
   const [showAnswer, setShowAnswer] = useState(true);
 

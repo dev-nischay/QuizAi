@@ -3,16 +3,42 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { RoomProps } from "../QuizHome";
 import { JoinQuizModal } from "../../../modals/JoiningRoomModal";
+import { useMutation } from "@tanstack/react-query";
+import { checkQuiz } from "../../../../services/checkQuiz";
+import type { ApiResponse } from "@common/contracts";
+import type { ApiError } from "@common/contracts";
 export const JoinQuiz = ({ onClose }: RoomProps) => {
   const [roomCode, setRoomCode] = useState("");
   const [isJoining, setJoining] = useState(false);
   const nav = useNavigate();
 
-  const handleJoinRoom = async () => {
-    if (roomCode.trim().length >= 5) {
-      console.log("Joining room:", roomCode);
-      setJoining(true);
+  const checkMutation = useMutation<
+    ApiResponse<{
+      success: true;
+      quiz: {
+        _id: "6a6b9879d6fe7a1aa5502238";
+      };
+    }>,
+    ApiError,
+    {
+      roomCode: string;
     }
+  >({
+    mutationFn: checkQuiz,
+    onSuccess: (response) => {
+      if (roomCode.trim().length >= 5) {
+        console.log("Joining room:", roomCode);
+        setJoining(true);
+      }
+    },
+    onError: (err) => {
+      console.log(err);
+      alert(err.error);
+    },
+  });
+
+  const handleJoinRoom = async () => {
+    checkMutation.mutate({ roomCode });
   };
 
   if (isJoining)

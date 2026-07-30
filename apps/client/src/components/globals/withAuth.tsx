@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 
 export const WithAuth = () => {
@@ -6,7 +6,7 @@ export const WithAuth = () => {
     const token = localStorage.getItem("Authorization")?.split(" ")[1] as string | null;
 
     if (!token || token.length === 0) {
-      window.location.replace("/");
+      <Navigate to={"/"} replace></Navigate>;
     }
   }, []);
 

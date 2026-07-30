@@ -11,7 +11,6 @@ import { createQuizSchema, type Question } from "@common/contracts";
 import { useNavigate } from "react-router-dom";
 import { QuizCreatedModal } from "../../modals/QuizCreatedModal";
 import { useAuthStore } from "../../../store/authStore";
-import { generateRoomCode } from "../../../utils/generateCode";
 
 export default function QuizBuilderPage() {
   const token = useAuthStore((state) => state.token);
@@ -20,9 +19,6 @@ export default function QuizBuilderPage() {
     if (!token) {
       nav("/");
     }
-    const code = generateRoomCode();
-    setGeneratedCode(code);
-    console.log(code);
   }, []);
 
   const titleRef = useRef<HTMLInputElement | null>(null);
@@ -31,7 +27,6 @@ export default function QuizBuilderPage() {
 
   const [isCreating, setCreating] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [generatedCode, setGeneratedCode] = useState("");
   const [isEditing, setEditing] = useState<boolean>(false);
   const [editQuestion, setEditQuestion] = useState<Question | null>(null);
   let { validator, fieldErrors, submitCount } = useFormSubmit<QuizFormData>();
@@ -43,7 +38,6 @@ export default function QuizBuilderPage() {
     const isValid = validator(
       {
         title,
-        quizId: "12345",
         questions,
       },
       createQuizSchema,
@@ -62,11 +56,11 @@ export default function QuizBuilderPage() {
       <QuizCreatedModal
         onClose={() => setCreating(false)}
         questionCount={questions.length} // remove this later
-        roomCode={generatedCode}
         quizData={{ title, questions }}
       />
     );
   }
+
   return (
     <div className="w-full min-h-screen  ">
       <BuildNavbar>

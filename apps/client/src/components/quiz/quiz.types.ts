@@ -19,8 +19,12 @@ export type QuestionBuilderProps = {
 
 export type QuizFormData = {
   title: string;
-  quizId: string;
   questions: Question[];
+};
+
+export type QuizResponse = {
+  title: string;
+  roomCode: string;
 };
 
 export type QuestionPreviewProps = Question & {

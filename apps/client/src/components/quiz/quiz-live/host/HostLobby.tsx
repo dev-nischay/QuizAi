@@ -59,7 +59,7 @@ export default function HostLobby() {
             onClick={() => socketService.sendMessage(showQuestion())}
             className=" uppercase font-bold cursor-pointer"
           >
-            start quiz
+          start quiza
           </button>
         </div>
       </div>
