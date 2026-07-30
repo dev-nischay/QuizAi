@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import type {createQuizBody} from "@common/contracts"
+import type { checkQuizBody, createQuizBody, Question } from "@common/contracts";
 import type { TQuiz } from "../types/mongo.types.js";
 import { Quiz } from "../models/quiz.js";
 import type { ApiResponse } from "@common/contracts";
@@ -7,17 +7,17 @@ import mongoose from "mongoose";
 import { AppError } from "../utils/appError.js";
 import { httpStatus } from "../types/enums.js";
 import { QuizMemory } from "../../ws/quiz.memory.js";
-
+import { generateRoomCode } from "../utils/generateCode.js";
 export const createQuiz = async (
   req: Request,
-  res: Response<ApiResponse<Pick<TQuiz, "title">>>,
+  res: Response<ApiResponse<Pick<TQuiz, "title" | "roomCode">>>,
   next: NextFunction,
 ) => {
   // saving quiz in db
 
-  const { title, questions, quizId } = req.validatedBody as createQuizBody;
+  const { title, questions } = req.validatedBody as createQuizBody;
   const { username, userId } = req.user;
-  console.log(req.user.userId, req.user.username);
+  const roomCode = generateRoomCode();
 
   const quizExists = await Quiz.findOne({ createdBy: userId });
 
@@ -25,12 +25,13 @@ export const createQuiz = async (
     return next(new AppError("quiz already exists", httpStatus.Conflict));
   }
 
-  const quiz = await Quiz.create({ title, questions, createdBy: userId });
+  const quiz = await Quiz.create({ title, questions, createdBy: userId, roomCode });
 
+  console.log(`creating room with id ${roomCode}`);
   // adding quiz to websocket state
 
-  if (QuizMemory.has(quizId)) {
-    return next(new AppError(`Room with id ${quizId} already exists`, httpStatus.Conflict));
+  if (QuizMemory.has(roomCode)) {
+    return next(new AppError(`Room with id ${roomCode} already exists`, httpStatus.Conflict));
   }
 
   const Quesmap = new Map(
@@ -45,13 +46,13 @@ export const createQuiz = async (
     ]),
   );
 
-  QuizMemory.set(quizId, {
+  QuizMemory.set(roomCode, {
     host: userId,
     hostConnection: {
       name: username,
       ws: null,
     },
-    quizId,
+    roomCode,
     title,
     questions: Quesmap,
     answers: new Map(),
@@ -66,8 +67,9 @@ export const createQuiz = async (
     success: true,
     data: {
       title,
+      roomCode,
     },
-    message: `Room with id ${quizId} is created`,
+    message: `Room with code ${roomCode} is created`,
   });
 };
 
@@ -94,18 +96,115 @@ export const deleteQuiz = async (req: Request, res: Response<ApiResponse<DeleteQ
   });
 };
 
-export const getQuiz = async (req: Request, res: Response, next: NextFunction) => {
+export const checkQuiz = async (req: Request, res: Response, next: NextFunction) => {
   // add response type later
-  const userId = req.user.userId;
+  const { roomCode } = req.validatedBody as checkQuizBody;
 
-  const quiz = await Quiz.find({ createdBy: userId }).select("-__v");
+  const quiz = await Quiz.findOne({ roomCode }).select("_id");
+  const quizInMemory = QuizMemory.get(roomCode);
 
-  if (!quiz || quiz.length === 0) {
+  if (!quiz) {
     return next(new AppError("quiz not found ", httpStatus.BadRequest));
+  }
+  if (quiz && !quizInMemory?.hostConnection.ws) {
+    return next(new AppError("host must start quiz to join", httpStatus.BadRequest));
   }
 
   return res.json({
     success: true,
     quiz,
+  });
+};
+
+export const testQuiz = async (req: Request, res: Response, next: NextFunction) => {
+  const name = req.body.name;
+
+  if (name !== "nischay") {
+    return next(new AppError("invalid user", httpStatus.Unauthorized));
+  }
+
+  const quiz = {
+    title: "Marvel Cinematic Universe Quiz",
+    roomCode: "MCU01",
+    questions: [
+      {
+        _id: "q1",
+        text: "Who is known as the God of Thunder?",
+        options: ["Loki", "Thor", "Odin", "Heimdall"],
+        correctOptionIndex: 1,
+      },
+      {
+        _id: "q2",
+        text: "Which Infinity Stone is housed inside the Tesseract?",
+        options: ["Mind Stone", "Power Stone", "Space Stone", "Time Stone"],
+        correctOptionIndex: 2,
+      },
+      {
+        _id: "q3",
+        text: "What is the real name of Iron Man?",
+        options: ["Steve Rogers", "Bruce Banner", "Tony Stark", "Clint Barton"],
+        correctOptionIndex: 2,
+      },
+      {
+        _id: "q4",
+        text: "Who says the famous line 'I can do this all day'?",
+        options: ["Captain America", "Black Panther", "Spider-Man", "Falcon"],
+        correctOptionIndex: 0,
+      },
+      {
+        _id: "q5",
+        text: "Which Avenger is a master of the mystic arts?",
+        options: ["Vision", "Doctor Strange", "Ant-Man", "Star-Lord"],
+        correctOptionIndex: 1,
+      },
+      {
+        _id: "q6",
+        text: "Who collected all six Infinity Stones and snapped his fingers?",
+        options: ["Ultron", "Thanos", "Loki", "Red Skull"],
+        correctOptionIndex: 1,
+      },
+    ] as Question[],
+  };
+
+  const quizId = "123456";
+
+  const userId = req.user.userId;
+  const username = req.user.username;
+
+  const Quesmap = new Map(
+    quiz.questions.map((e) => [
+      String(e._id),
+      {
+        _id: String(e._id),
+        text: e.text,
+        options: e.options,
+        correctOptionIndex: e.correctOptionIndex,
+      },
+    ]),
+  );
+
+  QuizMemory.set(quizId, {
+    host: userId,
+    hostConnection: {
+      name: username,
+      ws: null,
+    },
+    roomCode: quiz.roomCode,
+    title: quiz.title,
+    questions: Quesmap,
+    answers: new Map(),
+    currentQuestionId: null,
+    users: new Map(),
+    questionIndex: 0,
+  });
+
+  console.log(QuizMemory);
+
+  return res.json({
+    success: true,
+    data: {
+      title: quiz.title,
+    },
+    message: `Room with id ${quizId} is created`,
   });
 };

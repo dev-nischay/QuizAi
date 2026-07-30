@@ -8,7 +8,7 @@ export type QuizRoom = {
     name: string;
     ws: AuthWebSocket | null;
   };
-  quizId: string;
+  roomCode: string;
   currentQuestionId: string | null;
   title: string;
   questions: Map<string, Question>;

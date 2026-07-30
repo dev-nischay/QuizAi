@@ -19,7 +19,7 @@ export const broadCastMessage = (quiz: QuizRoom, response: ServerResponse, close
         ws.close(1000, closeSocket.message);
       }
     } else {
-      throw new wsError("socket not open", true);
+      console.warn("race condition");
     }
   }
 };
