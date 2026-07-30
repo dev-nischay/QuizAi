@@ -16,7 +16,7 @@ export default function LiveNavbar({ currentPlayers }: { currentPlayers: number 
               <span className="text-white">Live</span>
             </div>
             <div className="font-mono text-[0.62rem] lg:text-x  tracking-normal  text-gray-400 uppercase">
-              host control panel
+              Instant Live Quizzes
             </div>
           </div>
         </div>

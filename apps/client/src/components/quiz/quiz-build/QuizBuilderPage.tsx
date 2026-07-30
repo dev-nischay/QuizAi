@@ -67,7 +67,6 @@ export default function QuizBuilderPage() {
       />
     );
   }
-
   return (
     <div className="w-full min-h-screen  ">
       <BuildNavbar>

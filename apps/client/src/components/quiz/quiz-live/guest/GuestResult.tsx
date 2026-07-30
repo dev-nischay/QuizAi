@@ -94,9 +94,6 @@ export default function GuestResult() {
 
           {/* Actions */}
           <div className="grid sm:grid-cols-2 gap-4">
-            <button className="px-6 py-4 bg-black/50 border border-emerald-500/30 rounded-xl text-white font-bold hover:bg-black/70 hover:border-emerald-500/50 transition-all">
-              View Detailed Stats
-            </button>
             <button onClick={() => nav("/home")} className="relative group overflow-hidden rounded-xl">
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600" />
               <div className="relative px-6 py-4 font-bold text-white flex items-center justify-center gap-2">
