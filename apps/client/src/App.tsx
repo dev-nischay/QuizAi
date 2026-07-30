@@ -6,6 +6,7 @@ import QuizBuilderPage from "./components/quiz/quiz-build/QuizBuilderPage";
 import QuizLivePage from "./components/quiz/quiz-live/QuizLivePage";
 import NotFoundPage from "./components/globals/NotFoundPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { WithAuth } from "./components/globals/withAuth";
 
 const query = new QueryClient();
 
@@ -16,10 +17,12 @@ export default function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<AuthPage />} />
-            <Route path="home" element={<QuizHome />} />
-            <Route path="build" element={<QuizBuilderPage />} />
-            <Route path="live" element={<QuizLivePage />} />
-            <Route path="*" element={<NotFoundPage />} />
+            <Route element={<WithAuth />}>
+              <Route path="home" element={<QuizHome />} />
+              <Route path="build" element={<QuizBuilderPage />} />
+              <Route path="live" element={<QuizLivePage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
           </Route>
         </Routes>
       </QueryClientProvider>

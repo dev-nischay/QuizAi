@@ -10,12 +10,10 @@ import Loading from "../globals/Loading";
 import Error from "../globals/Error";
 import { submitQuiz } from "../../services/postQuiz";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/authStore";
 import { useRoomStore } from "../../store/roomStore";
 export function QuizCreatedModal({ roomCode, questionCount, onClose, quizData }: QuizCreateModalProps) {
   const [copied, setCopied] = useState(false);
   const nav = useNavigate();
-  const username = useAuthStore((state) => state.username);
   const setRoomCode = useRoomStore((state) => state.setRoomCode);
   const copyRoomCode = () => {
     navigator.clipboard.writeText(roomCode);
