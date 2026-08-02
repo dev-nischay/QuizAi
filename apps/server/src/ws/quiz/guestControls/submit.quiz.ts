@@ -6,6 +6,7 @@ import { zodParser } from "../../zod/zodParser.js";
 import { submitAnswerSchema, type submitAnswerBody } from "../../zod/quizActionsSchema.js";
 import { wsSend } from "../../utils/wsSend.js";
 import type { SubmitAnswerResponse } from "@common/contracts";
+import { leaderboard } from "../leaderBoard.quiz.js";
 export const submitAnswer = async (socket: AuthWebSocket, message: SubmitAnswerRequest) => {
   const { quizId, userId } = socket.user;
 
@@ -64,6 +65,8 @@ export const submitAnswer = async (socket: AuthWebSocket, message: SubmitAnswerR
 
   if (correctAnswerIndex === selectedOptionIndex) {
     currentUser.score += 100; // udpating the score
+
+    leaderboard(quiz);
 
     return wsSend(socket, {
       type: "ANSWER_RESULT",
