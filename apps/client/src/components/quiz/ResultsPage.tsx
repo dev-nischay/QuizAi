@@ -1,11 +1,33 @@
 import { Trophy, Zap, Award } from "lucide-react";
-import { useLiveStore } from "../../../../store/liveStore";
-import { useAuthStore } from "../../../../store/authStore";
+import { useLiveStore } from "../../store/liveStore";
+import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 
-export default function GuestResult() {
+export default function QuizResultsPage() {
   const username = useAuthStore((state) => state.username);
-  const leaderboard = useLiveStore((state) => state.leaderBoard);
+  // const leaderboard = useLiveStore((state) => state.leaderBoard);
+  const leaderboard = [
+    {
+      name: "nischay",
+      score: 200,
+    },
+    {
+      name: "dhwanit",
+      score: 400,
+    },
+    {
+      name: "anonymous12",
+      score: 800,
+    },
+    {
+      name: "random123",
+      score: 900,
+    },
+    {
+      name: "him",
+      score: 100,
+    },
+  ];
   const nav = useNavigate();
 
   const sortedLeaderboard = [...leaderboard]

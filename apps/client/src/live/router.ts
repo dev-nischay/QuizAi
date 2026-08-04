@@ -29,7 +29,7 @@ export const messageRouter = (response: ServerResponse) => {
       break;
 
     case "QUIZ_COMPLETED":
-      setPhase("results");
+      window.location.replace("/results");
       // handle quiz completed
       break;
 
@@ -39,7 +39,8 @@ export const messageRouter = (response: ServerResponse) => {
       break;
 
     case "QUIZ_STOPPED":
-      setPhase("results");
+      window.location.replace("/results");
+
       break;
 
     case "ERROR":

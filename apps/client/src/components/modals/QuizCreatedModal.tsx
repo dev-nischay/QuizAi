@@ -1,7 +1,7 @@
 // for redirecting host to main lobby
 
 import { useState } from "react";
-import { Check, Copy, Radio, X } from "lucide-react";
+import { Check, Radio, X } from "lucide-react";
 import type { QuizCreateModalProps } from "./modal.types";
 import { useMutation } from "@tanstack/react-query";
 import type { ApiResponse, ApiError } from "../../services/api";

@@ -3,7 +3,7 @@ import type { LeaderBoard, SubmitAnswerResponse } from "@common/contracts";
 import type { Options, Question } from "@common/contracts";
 type QuizDetails = { host: string; totalQuestionCount: number; title: string };
 type CurrentQuestion = Pick<Question, "text" | "options"> & { correctOptionIndex?: Options };
-type LivePhase = "lobby" | "active" | "results";
+type LivePhase = "lobby" | "active";
 type LiveSession = {
   phase: LivePhase;
   quizDetails: QuizDetails | null;

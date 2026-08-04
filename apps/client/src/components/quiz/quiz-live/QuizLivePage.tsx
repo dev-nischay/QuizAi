@@ -2,10 +2,8 @@ import { useEffect } from "react";
 import LiveNav from "./quiz-live-components/LiveNav";
 import HostLobby from "./host/HostLobby";
 import HostActive from "./host/HostActive";
-import HostResult from "./host/HostResult";
 import GuestLobby from "./guest/GuestLobby";
 import GuestActive from "./guest/GuestActive";
-import GuestResult from "./guest/GuestResult";
 import { useAuthStore } from "../../../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { useLiveStore } from "../../../store/liveStore";
@@ -40,11 +38,9 @@ export default function QuizLivePage() {
       <div className=" mt-28 lg:mt-0 max-w-7xl mx-auto  lg:px-4 lg:py-2">
         {phase === "lobby" && role === "host" && <HostLobby />}
         {phase === "active" && role === "host" && <HostActive />}
-        {phase === "results" && role === "host" && <HostResult />}
 
         {phase === "lobby" && role === "guest" && <GuestLobby />}
         {phase === "active" && role === "guest" && <GuestActive />}
-        {phase === "results" && role === "guest" && <GuestResult />}
       </div>
     </div>
   );
