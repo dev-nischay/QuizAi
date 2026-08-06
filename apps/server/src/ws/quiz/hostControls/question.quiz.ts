@@ -4,7 +4,7 @@ import { type showQuestionBody, showQuestionSchema } from "../../zod/quizActions
 import { zodParser } from "../../zod/zodParser.js";
 import { getQuiz } from "../../utils/getQuiz.js";
 import { wsError } from "../../utils/wsError.js";
-import type { QuestionResponse, QuizCompleted } from "@common/contracts";
+import type { QuestionResponse } from "@common/contracts";
 import { leaderboard } from "../leaderBoard.quiz.js";
 import { broadCastMessage } from "../../utils/broadCast.js";
 import { wsSend } from "../../utils/wsSend.js";
@@ -28,12 +28,7 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
 
       leaderboard(quiz);
 
-      const response: QuizCompleted = {
-        type: "QUIZ_COMPLETED",
-        message: "quiz is finished",
-      };
-
-      endQuiz(quiz, response, hostsocket);
+      endQuiz(quiz, "Quiz ended. Showing final results...", hostsocket);
 
       return;
     } // quiz finished

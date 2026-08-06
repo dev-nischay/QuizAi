@@ -40,6 +40,11 @@ export const joinRoom = async (socket: AuthWebSocket, message: JoinQuizRequest) 
   });
 
   wsSend(socket, {
+    type: "NOTIFICATION",
+    message: `Joined room ${quizId}`,
+  });
+
+  wsSend(socket, {
     type: "PHASE",
     phase: quiz.phase,
   });

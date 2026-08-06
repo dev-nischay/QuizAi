@@ -38,10 +38,10 @@ export const hostRouter = async (socket: AuthWebSocket, message: ClientResponse)
       break;
 
     case "SHOW_RESULT":
-      wsSend(socket, {
-        type: "RESPONSE",
-        message: "This feature will be available soon",
-      });
+      // wsSend(socket, {
+      //   type: "RESPONSE",
+      //   message: "This feature will be available soon",
+      // });
       break;
 
     case "STOP_QUIZ":

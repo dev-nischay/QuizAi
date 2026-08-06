@@ -5,7 +5,8 @@ import { wsSend } from "../utils/wsSend.js";
 export const handleError = async (socket: AuthWebSocket, error: unknown) => {
   if (error instanceof wsError) {
     const errorCode = error.errorCode ?? 1008;
-    console.log("Expected Error in websockets", error.message, error.stack);
+
+    console.log("Expected Error in websockets", error.message, error?.details, error.stack);
 
     if (error.closeSocket) {
       console.log("closing socket connection");

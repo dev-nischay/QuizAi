@@ -3,8 +3,8 @@ import type { AuthWebSocket } from "../../types/ws.types.js";
 import { wsSend } from "../../utils/wsSend.js";
 export const leaveQuiz = (socket: AuthWebSocket, message: LeaverQuizRequest) => {
   wsSend(socket, {
-    type: "USER_LEFT",
-    message: "you are disconnected ",
+    type: "NOTIFICATION",
+    message: "You've left the quiz successfully.",
   });
 
   wsSend(socket, {

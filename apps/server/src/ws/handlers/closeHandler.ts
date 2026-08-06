@@ -4,11 +4,12 @@ import { Quiz } from "../../http/models/quiz.js";
 import { QuizMemory } from "../quiz.memory.js";
 import type { QuizRoom } from "../quiz.memory.js";
 import { broadCastMessage } from "../utils/broadCast.js";
+import type { Notification } from "@common/contracts";
 import { lobbyUpdates } from "../quiz/lobby.quiz.js";
 import jwt from "jsonwebtoken";
 const Secret = process.env.JWT_SECRET as string;
 import { leaderboard } from "../quiz/leaderBoard.quiz.js";
-import type { PhaseUpdate, ServerResponse, StopQuizResponse } from "@common/contracts";
+import type { PhaseUpdate } from "@common/contracts";
 export const handleClose = async (socket: AuthWebSocket, details: { code: number; reason: string }) => {
   if (socket.user) {
     const { quizId, userId, role } = socket.user;
@@ -39,15 +40,15 @@ export const handleClose = async (socket: AuthWebSocket, details: { code: number
       case "host":
         if (quiz.host === userId) {
           quiz.hostConnection.ws = null;
-          let hostDisconnectedClosure: null | StopQuizResponse = null;
+          let hostDisconnectedClosure: null | Notification = null;
 
           if (!details || details.reason.length == 0) {
             console.log("termination handled");
 
             (JSON.stringify(
               (hostDisconnectedClosure = {
-                type: "QUIZ_STOPPED",
-                message: "host disconnected ",
+                type: "NOTIFICATION",
+                message: "The host has been disconnected. Showing final results...",
               }),
             ),
               broadCastMessage(quiz, hostDisconnectedClosure, { close: false }));
@@ -58,7 +59,6 @@ export const handleClose = async (socket: AuthWebSocket, details: { code: number
               type: "PHASE",
               phase: quiz.phase,
             };
-
             broadCastMessage(quiz, closeResponse, { close: true, message: "quiz ended" }); // kick guest's out one by one
 
             return;

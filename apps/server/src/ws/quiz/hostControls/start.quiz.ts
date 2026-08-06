@@ -31,6 +31,11 @@ export const startQuiz = async (socket: AuthWebSocket, message: StartQuizRequest
   });
 
   wsSend(socket, {
+    type: "NOTIFICATION",
+    message: `Room ${quizId} created `,
+  });
+
+  wsSend(socket, {
     type: "PHASE",
     phase: quiz.phase,
   });

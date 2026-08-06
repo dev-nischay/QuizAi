@@ -15,7 +15,7 @@ export const guestRouter = async (socket: AuthWebSocket, message: ClientResponse
   }
 
   switch (typeRequest) {
-    case "JOIN_ROOM":
+    case "JOIN_QUIZ":
       await joinRoom(socket, message);
       break;
 

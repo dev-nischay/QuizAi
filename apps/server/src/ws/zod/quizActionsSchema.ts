@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const joinQuizSchema = z.object({
-  type: z.literal("JOIN_ROOM"),
+  type: z.literal("JOIN_QUIZ"),
   name: z.string().max(16, "name cannot be more than 16 char"),
 });
 
