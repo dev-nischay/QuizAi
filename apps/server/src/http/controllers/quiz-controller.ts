@@ -16,22 +16,52 @@ export const createQuiz = async (
   // saving quiz in db
 
   const { title, questions } = req.validatedBody as createQuizBody;
-  const { username, userId } = req.user;
+  const { userId } = req.user;
   const roomCode = generateRoomCode();
 
-  const quizExists = await Quiz.findOne({ createdBy: userId });
+  const inProgressQuiz = await Quiz.findOne({ createdBy: userId, gameState: "in_progress" });
 
-  if (quizExists) {
-    return next(new AppError("quiz already exists", httpStatus.Conflict));
+  if (inProgressQuiz) {
+    return next(new AppError("Finish your current quiz before creating a new one", httpStatus.Conflict));
   }
 
-  const quiz = await Quiz.create({ title, questions, createdBy: userId, roomCode });
+  const quiz = await Quiz.create({ title, questions, createdBy: userId, roomCode, gameState: "waiting" });
 
   console.log(`creating room with id ${roomCode}`);
   // adding quiz to websocket state
 
   if (QuizMemory.has(roomCode)) {
-    return next(new AppError(`Room with id ${roomCode} already exists`, httpStatus.Conflict));
+    return next(new AppError(`Room with id ${roomCode} is already live`, httpStatus.Conflict));
+  }
+
+  console.log(QuizMemory);
+
+  return res.json({
+    success: true,
+    data: {
+      title,
+      roomCode,
+    },
+    message: `Room with code ${roomCode} is created`,
+  });
+};
+
+export const liveQuiz = async (req: Request, res: Response<ApiResponse<{ message: string }>>, next: NextFunction) => {
+  const { userId, username } = req.user;
+
+  const inProgressQuiz = await Quiz.findOne({ createdBy: userId, gameState: "in_progress" });
+  if (inProgressQuiz) {
+    return next(new AppError("Finish your current quiz before starting a new one", httpStatus.Conflict));
+  }
+
+  const quiz = await Quiz.findOneAndUpdate({ createdBy: userId, gameState: "waiting" }, { gameState: "in_progress" });
+
+  if (!quiz) return next(new AppError("quiz not found", httpStatus.BadRequest));
+
+  const { title, roomCode } = quiz;
+
+  if (QuizMemory.has(roomCode)) {
+    return next(new AppError(`Room with id ${roomCode} is already live`, httpStatus.Conflict));
   }
 
   const Quesmap = new Map(
@@ -62,16 +92,7 @@ export const createQuiz = async (
     questionIndex: 0,
   });
 
-  console.log(QuizMemory);
-
-  return res.json({
-    success: true,
-    data: {
-      title,
-      roomCode,
-    },
-    message: `Room with code ${roomCode} is created`,
-  });
+  return res.json({ success: true, message: `Room with code: ${roomCode} is now live` });
 };
 
 type DeleteQuizResponse = Pick<TQuiz, "title"> & {
@@ -101,19 +122,33 @@ export const checkQuiz = async (req: Request, res: Response, next: NextFunction)
   // add response type later
   const { roomCode } = req.validatedBody as checkQuizBody;
 
-  const quiz = await Quiz.findOne({ roomCode }).select("_id");
+  const quiz = await Quiz.findOne({ roomCode }).select("_id gameState");
   const quizInMemory = QuizMemory.get(roomCode);
 
   if (!quiz) {
     return next(new AppError("quiz not found ", httpStatus.BadRequest));
   }
-  if (quiz && !quizInMemory?.hostConnection.ws) {
-    return next(new AppError("host must start quiz to join", httpStatus.BadRequest));
+
+  if (quiz.gameState === "ended") {
+    return next(new AppError("The quiz you're trying to join has ended ", httpStatus.BadRequest));
+  }
+
+  if (!quizInMemory || quizInMemory.phase !== "lobby") {
+    if (!quizInMemory || !quizInMemory.phase) {
+      return next(new AppError("Host has not started the lobby yet", httpStatus.BadRequest));
+    }
+    if (quizInMemory.phase === "active") {
+      return next(new AppError("The quiz has already started", httpStatus.BadRequest));
+    }
+    if (quizInMemory.phase === "results") {
+      return next(new AppError("The quiz has ended", httpStatus.BadRequest));
+    }
   }
 
   return res.json({
     success: true,
-    quiz,
+    message: `Joining room with id ${roomCode} `,
+    data: quiz,
   });
 };
 

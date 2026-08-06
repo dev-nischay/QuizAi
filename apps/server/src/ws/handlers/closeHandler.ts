@@ -13,6 +13,10 @@ import type { PhaseUpdate } from "@common/contracts";
 export const handleClose = async (socket: AuthWebSocket, details: { code: number; reason: string }) => {
   if (socket.user) {
     const { quizId, userId, role } = socket.user;
+    if (!QuizMemory.has(quizId)) {
+      console.log(`Quiz with code ${quizId} has already been cleaned up or does not exist.`);
+      return;
+    }
     const quiz: QuizRoom = getQuiz(quizId);
     switch (role) {
       case "guest":
@@ -31,7 +35,7 @@ export const handleClose = async (socket: AuthWebSocket, details: { code: number
         } else {
           console.log(`${user?.name} last member has been removed `);
           QuizMemory.delete(quizId);
-          await Quiz.findOneAndDelete({ createdBy: quiz.host });
+          await Quiz.findOneAndUpdate({ createdBy: quiz.host, gameState: "in_progress" }, { gameState: "ended" });
           console.log("quiz removed from memory closure handled gracefully");
           // room is removed when the last user disconnects
         }
@@ -75,7 +79,7 @@ export const handleClose = async (socket: AuthWebSocket, details: { code: number
           if (quiz.users.size < 1) {
             console.log("deletetion ran");
             QuizMemory.delete(quizId);
-            await Quiz.findOneAndDelete({ createdBy: userId });
+            await Quiz.findOneAndUpdate({ roomCode: quizId }, { gameState: "ended" });
             return;
           } // host disconnects when room is empty
         }

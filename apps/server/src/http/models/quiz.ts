@@ -8,6 +8,11 @@ const quizSchema = new Schema<TQuiz>({
     required: true,
   },
 
+  gameState: {
+    type: String,
+    required: true,
+  },
+
   roomCode: {
     type: String,
     required: true,
