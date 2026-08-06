@@ -2,11 +2,20 @@ import type { AuthWebSocket } from "../types/ws.types.js";
 import { startQuiz } from "../quiz/hostControls/start.quiz.js";
 import { showQuestion } from "../quiz/hostControls/question.quiz.js";
 import { stopQuiz } from "../quiz/hostControls/stop.quiz.js";
-import type { ClientResponse } from "@common/contracts";
+import type {
+  StartQuizRequest,
+  ShowQuestionRequest,
+  ShowResultRequest,
+  StopQuizRequest,
+  ClientResponse,
+} from "@common/contracts";
 import { wsError } from "../utils/wsError.js";
 import { isOpen } from "../utils/isOpen.js";
 import { isHost } from "../utils/validateRole.js";
 import { wsSend } from "../utils/wsSend.js";
+
+type HostRequest = StartQuizRequest | ShowQuestionRequest | ShowResultRequest | StopQuizRequest;
+
 export const hostRouter = async (socket: AuthWebSocket, message: ClientResponse) => {
   const typeResponse = message.type;
   const { role, quizId, userId } = socket.user;

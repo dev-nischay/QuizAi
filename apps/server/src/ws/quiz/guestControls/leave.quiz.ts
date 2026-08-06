@@ -7,6 +7,11 @@ export const leaveQuiz = (socket: AuthWebSocket, message: LeaverQuizRequest) => 
     message: "you are disconnected ",
   });
 
+  wsSend(socket, {
+    type: "PHASE",
+    phase: null,
+  });
+
   socket.close(1000);
   // cleanup handled in closehandler
 };

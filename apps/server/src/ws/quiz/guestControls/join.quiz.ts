@@ -19,10 +19,9 @@ export const joinRoom = async (socket: AuthWebSocket, message: JoinQuizRequest) 
 
   const quiz = getQuiz(quizId);
 
-  if (!quiz.hostConnection.ws) {
+  if (!quiz.hostConnection.ws || !quiz.phase) {
     throw new wsError("quiz must be live to join");
   }
-
   quiz.users.set(userId, {
     ws: socket,
     name,
@@ -38,5 +37,10 @@ export const joinRoom = async (socket: AuthWebSocket, message: JoinQuizRequest) 
     type: "USER_JOINED",
     message: `room joined with id ${quizId}`,
     quizDetails: { host: quiz.hostConnection.name, totalQuestionCount: totalQuestions, title: quiz.title },
+  });
+
+  wsSend(socket, {
+    type: "PHASE",
+    phase: quiz.phase,
   });
 };

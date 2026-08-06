@@ -1,15 +1,14 @@
 import type { AuthWebSocket } from "../../types/ws.types.js";
-import type { ShowQuestionRequest } from "@common/contracts";
+import type { PhaseUpdate, ShowQuestionRequest } from "@common/contracts";
 import { type showQuestionBody, showQuestionSchema } from "../../zod/quizActionsSchema.js";
 import { zodParser } from "../../zod/zodParser.js";
 import { getQuiz } from "../../utils/getQuiz.js";
 import { wsError } from "../../utils/wsError.js";
-import { QuizMemory } from "../../quiz.memory.js";
 import type { QuestionResponse, QuizCompleted } from "@common/contracts";
-import { Quiz } from "../../../http/models/quiz.js";
 import { leaderboard } from "../leaderBoard.quiz.js";
 import { broadCastMessage } from "../../utils/broadCast.js";
 import { wsSend } from "../../utils/wsSend.js";
+import { endQuiz } from "../../utils/endQuiz.js";
 export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionRequest) => {
   zodParser(message, showQuestionSchema) as showQuestionBody;
 
@@ -28,19 +27,20 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
       const hostsocket = quiz.hostConnection.ws;
 
       leaderboard(quiz);
+
       const response: QuizCompleted = {
         type: "QUIZ_COMPLETED",
         message: "quiz is finished",
       };
-      wsSend(hostsocket, response);
-      hostsocket?.close(1000, JSON.stringify(response));
+
+      endQuiz(quiz, response, hostsocket);
+
       return;
-    }
+    } // quiz finished
 
     let currentQuestion = questions[quiz.questionIndex];
 
     if (!currentQuestion) throw new wsError("Question not found", true);
-    quiz.questionIndex++;
 
     console.log(`Currently Showing Question${currentQuestion.text}`);
 
@@ -58,6 +58,10 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
     // creating current question entry in answered map
     quiz.answers.set(currentQuestion._id, new Map());
 
+    // updating the quiz phase to active for ui synchronization
+
+    quiz.phase = "active";
+
     // sending current live question to host
     wsSend(socket, {
       type: "QUESTION",
@@ -67,10 +71,26 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
       options: currentQuestion.options,
       correctOptionIndex: currentQuestion.correctOptionIndex,
     });
+
     // broadcasting current question to all the users
     broadCastMessage(quiz, response, { close: false });
+
+    // updating leaderboard
+    leaderboard(quiz);
+
+    // sending updated phase to both host and users on the intial question
+    if (quiz.questionIndex == 0) {
+      const phaseUpdate: PhaseUpdate = {
+        type: "PHASE",
+        phase: quiz.phase,
+      };
+      wsSend(socket, phaseUpdate);
+
+      broadCastMessage(quiz, phaseUpdate, { close: false });
+    }
+
+    quiz.questionIndex++;
   }
-  leaderboard(quiz);
   console.log(quiz.questionIndex);
   return;
 };

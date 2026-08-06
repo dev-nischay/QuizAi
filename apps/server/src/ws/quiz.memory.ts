@@ -4,6 +4,7 @@ import type { SocketUser } from "./types/ws.types.js";
 
 export type QuizRoom = {
   host: string;
+  phase: "lobby" | "active" | "results" | null;
   hostConnection: {
     name: string;
     ws: AuthWebSocket | null;

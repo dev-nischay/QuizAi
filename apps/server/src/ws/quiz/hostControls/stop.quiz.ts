@@ -1,4 +1,4 @@
-import type { StopQuizRequest } from "@common/contracts";
+import type { PhaseUpdate, StopQuizRequest } from "@common/contracts";
 import type { AuthWebSocket } from "../../types/ws.types.js";
 import { stopQuizSchema, type stopBody } from "../../zod/quizActionsSchema.js";
 import { zodParser } from "../../zod/zodParser.js";
@@ -8,6 +8,7 @@ import type { StopQuizResponse } from "@common/contracts";
 import { QuizMemory } from "../../quiz.memory.js";
 import { Quiz } from "../../../http/models/quiz.js";
 import { wsSend } from "../../utils/wsSend.js";
+import { endQuiz } from "../../utils/endQuiz.js";
 export const stopQuiz = async (socket: AuthWebSocket, message: StopQuizRequest) => {
   zodParser(message, stopQuizSchema) as stopBody;
   const { quizId } = socket.user;
@@ -17,10 +18,10 @@ export const stopQuiz = async (socket: AuthWebSocket, message: StopQuizRequest) 
 
   const response: StopQuizResponse = {
     type: "QUIZ_STOPPED",
-    message: "quiz stopped early by host",
+    message: "quiz ended early by the host",
   };
 
-  wsSend(hostsocket, response);
-  hostsocket.close(1000, JSON.stringify(response));
+  endQuiz(quiz, response, hostsocket);
+
   return;
 };

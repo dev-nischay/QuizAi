@@ -10,5 +10,5 @@ export const getQuiz = (quizId: string): QuizRoom => {
     }
 
     return quiz;
-  } else throw new wsError("Invalid quiz Id");
+  } else throw new wsError("Invalid quiz Id", true, 1008);
 };

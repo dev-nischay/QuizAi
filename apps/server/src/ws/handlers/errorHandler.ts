@@ -20,14 +20,16 @@ export const handleError = async (socket: AuthWebSocket, error: unknown) => {
 
   if (error instanceof Error) {
     console.log("Unexpected Error in websockets", error.message, error.stack);
-    console.log("closing socket connection");
 
-    return socket.close(
-      1011,
-      JSON.stringify({
-        type: "Error",
-        error: "Something went wrong try again later",
-      }),
-    );
+    if (socket.readyState === socket.OPEN) {
+      console.log("closing socket connection");
+      return socket.close(
+        1011,
+        JSON.stringify({
+          type: "Error",
+          error: "Something went wrong try again later",
+        }),
+      );
+    }
   }
 };

@@ -4,7 +4,9 @@ import { submitAnswer } from "../quiz/guestControls/submit.quiz.js";
 import { isParticipant } from "../utils/validateRole.js";
 import { wsError } from "../utils/wsError.js";
 import { leaveQuiz } from "../quiz/guestControls/leave.quiz.js";
-export const guestRouter = async (socket: AuthWebSocket, message: any) => {
+import type { JoinQuizRequest, SubmitAnswerRequest, LeaverQuizRequest, ClientResponse } from "@common/contracts";
+
+export const guestRouter = async (socket: AuthWebSocket, message: ClientResponse) => {
   const typeRequest = message.type;
   const { userId, quizId, role } = socket.user;
 
@@ -24,13 +26,11 @@ export const guestRouter = async (socket: AuthWebSocket, message: any) => {
       await submitAnswer(socket, message);
       break;
 
-    case "LEAVE_ROOM":
+    case "LEAVE_QUIZ":
       if (!isParticipant(userId, quizId)) {
         throw new wsError("Unauthorized Acess", true, 1008);
       }
       leaveQuiz(socket, message);
-      break;
-
       break;
 
     default:

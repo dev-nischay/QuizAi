@@ -1,12 +1,12 @@
 import type { IncomingMessage } from "http";
 import jwt from "jsonwebtoken";
+const Secret = process.env.JWT_SECRET as string;
 import { getUrl } from "./utils/parseUrl.js";
 import type { Payload } from "../types/global.types.js";
 import type { Client } from "./types/ws.types.js";
 import { getQuiz } from "./utils/getQuiz.js";
 import { connectUserSchema } from "./zod/userSchema.js";
 import type { userBody } from "./zod/userSchema.js";
-const Secret = process.env.JWT_SECRET as string;
 import { zodParser } from "./zod/zodParser.js";
 import { wsError } from "./utils/wsError.js";
 
