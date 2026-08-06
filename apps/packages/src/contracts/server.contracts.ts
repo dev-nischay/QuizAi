@@ -9,6 +9,8 @@ export type LeaderBoard = {
   name: string;
   score: number;
 };
+// later
+
 export type JoinResponse = {
   type: "USER_JOINED";
   quizDetails: { host: string; totalQuestionCount: number; title: string };
@@ -19,11 +21,6 @@ export type StartResponse = {
   type: "QUIZ_STARTED";
   quizDetails: { host: string; totalQuestionCount: number; title: string };
   quizId: string;
-  message: string;
-};
-
-export type StopQuizResponse = {
-  type: "QUIZ_STOPPED";
   message: string;
 };
 
@@ -67,24 +64,11 @@ export type LobbyUpdates = {
   users: string[];
 };
 
-export type QuizCompleted = {
-  type: "QUIZ_COMPLETED";
+export type Notification = {
+  type: "NOTIFICATION";
   message: string;
 };
 
-export type GeneralResponse = {
-  type: "RESPONSE";
-  message: string;
-};
-
-export type BroadCast = {
-  type: "BROADCAST";
-  message: string;
-};
-export type LeaveResponse = {
-  type: "USER_LEFT";
-  message: string;
-};
 export type PhaseUpdate = {
   type: "PHASE";
   phase: "lobby" | "active" | "results" | null;
@@ -98,10 +82,6 @@ export type ServerResponse =
   | ShowResultResponse
   | ServerError
   | LeaderboardUpdates
-  | QuizCompleted
-  | GeneralResponse
   | LobbyUpdates
-  | StopQuizResponse
-  | BroadCast
-  | LeaveResponse
-  | PhaseUpdate;
+  | PhaseUpdate
+  | Notification;

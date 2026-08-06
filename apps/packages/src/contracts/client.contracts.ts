@@ -1,6 +1,6 @@
 import type { Options } from "../types/global.types.js";
 export type JoinQuizRequest = {
-  type: "JOIN_ROOM";
+  type: "JOIN_QUIZ";
   name: string;
 };
 
