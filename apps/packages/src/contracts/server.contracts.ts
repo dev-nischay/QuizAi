@@ -85,6 +85,10 @@ export type LeaveResponse = {
   type: "USER_LEFT";
   message: string;
 };
+export type PhaseUpdate = {
+  type: "PHASE";
+  phase: "lobby" | "active" | "results" | null;
+};
 
 export type ServerResponse =
   | JoinResponse
@@ -99,4 +103,5 @@ export type ServerResponse =
   | LobbyUpdates
   | StopQuizResponse
   | BroadCast
-  | LeaveResponse;
+  | LeaveResponse
+  | PhaseUpdate;
