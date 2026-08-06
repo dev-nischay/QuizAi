@@ -48,6 +48,7 @@ export const createQuiz = async (
 
   QuizMemory.set(roomCode, {
     host: userId,
+    phase: null,
     hostConnection: {
       name: username,
       ws: null,
@@ -185,6 +186,7 @@ export const testQuiz = async (req: Request, res: Response, next: NextFunction) 
 
   QuizMemory.set(quizId, {
     host: userId,
+    phase: null,
     hostConnection: {
       name: username,
       ws: null,
