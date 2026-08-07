@@ -1,26 +1,15 @@
 import { Trophy, Play } from "lucide-react";
 import { showQuestion } from "../../../../live/handlers/host/showQuestion";
-import { startQuiz } from "../../../../live/handlers/host/startQuiz";
 import { useLiveStore } from "../../../../store/liveStore";
 import { socketService } from "../../../../live/socket-client";
-import { useEffect } from "react";
 import { useRoomStore } from "../../../../store/roomStore";
 import { PlayerInLobby } from "../quiz-live-components/PlayersInLobby";
+import { useShallow } from "zustand/shallow";
 
 export default function HostLobby() {
-  const quizDetails = useLiveStore((state) => state.quizDetails);
-  const quizId = useRoomStore((state) => state.roomCode);
-  const liveUsers = useLiveStore((state) => state.liveUsers);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      socketService.sendMessage(startQuiz());
-    }, 1000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  const quizDetails = useLiveStore(useShallow((state) => state.quizDetails))
+  const quizId = useRoomStore(useShallow((state) => state.roomCode))
+  const liveUsers = useLiveStore(useShallow((state) => state.liveUsers))
 
   return (
     <div className="w-full flex lg:flex-row flex-col 2xl:mt-20 mt-4 gap-4">

@@ -1,21 +1,11 @@
 import { Users, Zap } from "lucide-react";
 import { useLiveStore } from "../../../../store/liveStore";
-import { joinQuiz } from "../../../../live/handlers/guest/joinQuiz";
-import { useAuthStore } from "../../../../store/authStore";
 import { useShallow } from "zustand/shallow";
-import { socketService } from "../../../../live/socket-client";
-import { useEffect } from "react";
 import { PlayerInLobby } from "../quiz-live-components/PlayersInLobby";
 export default function GuestLobby() {
-  const username = useAuthStore((state) => state.username);
-
   const quizDetails = useLiveStore(useShallow((state) => state.quizDetails));
 
-  useEffect(() => {
-    setTimeout(() => {
-      socketService.sendMessage(joinQuiz(username));
-    }, 1000);
-  }, []);
+
 
   return (
     <div className="min-h-screen text-white">
@@ -46,7 +36,6 @@ export default function GuestLobby() {
               </div>
 
               <button
-                onClick={() => joinQuiz(username)}
                 className="w-full relative group overflow-hidden rounded-xl mt-4"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600" />

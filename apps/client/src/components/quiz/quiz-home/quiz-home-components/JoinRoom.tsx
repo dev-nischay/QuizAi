@@ -25,7 +25,7 @@ export const JoinQuiz = ({ onClose }: RoomProps) => {
     }
   >({
     mutationFn: checkQuiz,
-    onSuccess: (response) => {
+    onSuccess: () => {
       if (roomCode.trim().length >= 5) {
         console.log("Joining room:", roomCode);
         setJoining(true);

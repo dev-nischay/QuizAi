@@ -5,32 +5,39 @@ import HostActive from "./host/HostActive";
 import GuestLobby from "./guest/GuestLobby";
 import GuestActive from "./guest/GuestActive";
 import { useAuthStore } from "../../../store/authStore";
-import { useNavigate } from "react-router-dom";
 import { useLiveStore } from "../../../store/liveStore";
 import { socketService } from "../../../live/socket-client";
 import { useRoomStore } from "../../../store/roomStore";
+import { useSocket } from "../../../live/socketHook";
+import Loading from "../../globals/Loading";
+import Error from "../../globals/Error";
+
 export default function QuizLivePage() {
   const phase = useLiveStore((state) => state.phase);
   const liveUsers = useLiveStore((state) => state.liveUsers);
 
   const token = useAuthStore((state) => state.token);
   const role = useAuthStore((state) => state.role);
+  const username = useAuthStore((state) => state.username);
 
   const quizId = useRoomStore((state) => state.roomCode);
-  const nav = useNavigate();
+
+  const { connect, loading, error } = useSocket({ token, role, quizId, username });
 
   useEffect(() => {
-    if (!role || !quizId) {
-      nav("/home");
-      return;
-    }
-
-    socketService.connect(token, role, quizId);
-
+    connect();
     return () => {
       socketService.disconnect();
     };
   }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <Error message={String(error)} />;
+  }
 
   return (
     <div className="w-full min-h-screen   ">
