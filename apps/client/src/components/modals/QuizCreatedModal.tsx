@@ -5,22 +5,20 @@ import { Check, Radio, X } from "lucide-react";
 import type { QuizCreateModalProps } from "./modal.types";
 import { useMutation } from "@tanstack/react-query";
 import type { ApiResponse, ApiError } from "../../services/api";
-import type { QuizFormData, QuizResponse } from "../quiz/quiz.types";
+import type { QuizFormData } from "../quiz/quiz.types";
 import Loading from "../globals/Loading";
 import Error from "../globals/Error";
-import { submitQuiz } from "../../services/postQuiz";
 import { useNavigate } from "react-router-dom";
 import { useRoomStore } from "../../store/roomStore";
-export function QuizCreatedModal({ questionCount, onClose, quizData }: QuizCreateModalProps) {
+import { liveQuiz } from "../../services/liveQuiz";
+export function QuizCreatedModal({ questionCount, onClose, roomCode, title }: QuizCreateModalProps) {
   const nav = useNavigate();
   const setRoomCode = useRoomStore((state) => state.setRoomCode);
-
   const [genericError, setGenericError] = useState("");
 
-  const { isPending, mutate, isError } = useMutation<ApiResponse<QuizResponse>, ApiError<QuizFormData>, QuizFormData>({
-    mutationFn: submitQuiz,
-    onSuccess: (response) => {
-      const roomCode = response.data!.roomCode;
+  const { isPending, mutate, isError } = useMutation<ApiResponse<{ message: string }>, ApiError<QuizFormData>>({
+    mutationFn: liveQuiz,
+    onSuccess: () => {
       setRoomCode(roomCode);
       nav("/live");
     },
@@ -30,12 +28,16 @@ export function QuizCreatedModal({ questionCount, onClose, quizData }: QuizCreat
   });
 
   const createQuiz = () => {
-    mutate({ ...quizData });
+    mutate();
   };
 
-  if (isPending) return <Loading />;
+  if (isPending) {
+    return <Loading />;
+  }
 
-  if (isError) return <Error message={genericError} />;
+  if (isError) {
+    return <Error message={genericError} />;
+  }
 
   return (
     <div className="fixed  inset-0   bg-black/80 backdrop-blur-sm flex items-center justify-center z-20 p-4">
@@ -94,8 +96,7 @@ export function QuizCreatedModal({ questionCount, onClose, quizData }: QuizCreat
                 <div className="text-xs text-gray-500 font-mono mt-1">Questions</div>
               </div>
               <div className="bg-teal-500/5 border border-teal-500/20 rounded-xl p-4">
-                <div className="text-3xl font-black text-teal-400">0</div>
-                <div className="text-xs text-gray-500 font-mono mt-1">Players</div>
+                <div className="text-xs text-gray-500 font-mono mt-1">{title}</div>
               </div>
             </div>
 
