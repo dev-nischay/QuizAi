@@ -17,6 +17,11 @@ export type JoinResponse = {
   message: string;
 };
 
+export type FinalResult = {
+  type: "FINAL_RESULT";
+  result: LeaderBoard[];
+};
+
 export type StartResponse = {
   type: "QUIZ_STARTED";
   quizDetails: { host: string; totalQuestionCount: number; title: string };
@@ -84,4 +89,5 @@ export type ServerResponse =
   | LeaderboardUpdates
   | LobbyUpdates
   | PhaseUpdate
-  | Notification;
+  | Notification
+  | FinalResult;
