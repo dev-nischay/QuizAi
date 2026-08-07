@@ -1,9 +1,9 @@
-import type { Question } from "@common/contracts";
 
 export type QuizCreateModalProps = {
   questionCount: number;
   onClose: () => void;
-  quizData: { title: string; questions: Question[] };
+  roomCode: string;
+  title: string;
 };
 
 export type JoinQuizModalProps = {
