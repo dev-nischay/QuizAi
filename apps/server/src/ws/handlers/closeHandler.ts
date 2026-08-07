@@ -37,7 +37,10 @@ export const handleClose = async (socket: AuthWebSocket, details: { code: number
         } else {
           console.log(`${user?.name} last member has been removed `);
           QuizMemory.delete(quizId);
-          await Quiz.findOneAndUpdate({ createdBy: quiz.host, gameState: "in_progress" }, { gameState: "ended" });
+          await Quiz.findOneAndUpdate(
+            { createdBy: quiz.host, gameState: "in_progress" },
+            { $set: { gameState: "ended" } },
+          );
           console.log("quiz removed from memory closure handled gracefully");
           // room is removed when the last user disconnects
         }
@@ -58,6 +61,19 @@ export const handleClose = async (socket: AuthWebSocket, details: { code: number
               }),
             ),
               broadCastMessage(quiz, hostDisconnectedClosure, { close: false }));
+
+            const finalResult = leaderboard(quiz);
+
+            if (finalResult) {
+              broadCastMessage(
+                quiz,
+                {
+                  type: "FINAL_RESULT",
+                  result: finalResult!,
+                },
+                { close: false },
+              );
+            }
 
             quiz.phase = "results";
 

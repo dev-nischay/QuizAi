@@ -27,6 +27,6 @@ export const leaderboard = (quiz: QuizRoom) => {
     wsSend(quiz.hostConnection.ws!, response);
 
     broadCastMessage(quiz, response, { close: false });
-    return;
+    return leaderboard;
   }
 };
