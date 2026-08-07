@@ -1,15 +1,12 @@
 import type { ServerResponse } from "@common/contracts";
 import { useLiveStore } from "../store/liveStore";
+import { useResultStore } from "../store/resultStore";
 
 export const messageRouter = (response: ServerResponse) => {
-  const { phase, setQuestion, setLivePlayers, setLeaderBoard, setAnswer, setPhase, setQuizDetails } =
-    useLiveStore.getState();
-
+  const { setQuestion, setLivePlayers, setLeaderBoard, setAnswer, setPhase, setQuizDetails } = useLiveStore.getState();
+  const { setFinalResult } = useResultStore.getState();
   switch (response.type) {
     case "QUESTION":
-      if (phase === "lobby") {
-        setPhase("active");
-      }
       const { text, options, correctOptionIndex } = response; // correctOptionIndex only available for host will remain undefined for other
       setQuestion({ text, options, correctOptionIndex });
       break;
@@ -28,19 +25,27 @@ export const messageRouter = (response: ServerResponse) => {
       setQuizDetails(response.quizDetails);
       break;
 
-    case "QUIZ_COMPLETED":
-      window.location.replace("/results");
+    case "FINAL_RESULT":
+      setFinalResult(response.result);
+      break;
+
+    case "PHASE":
+      const phase = response.phase;
+      if (phase === "lobby") {
+        setPhase("lobby");
+      } else if (phase === "active") {
+        setPhase("active");
+      } else if (phase === "results") {
+        window.location.replace("/results");
+      } else {
+        window.location.replace("/home");
+      }
       // handle quiz completed
       break;
 
     case "QUIZ_STARTED":
       setQuizDetails(response.quizDetails);
       // redirect to live page
-      break;
-
-    case "QUIZ_STOPPED":
-      window.location.replace("/results");
-
       break;
 
     case "ERROR":
