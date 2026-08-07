@@ -13,10 +13,12 @@ import type { PhaseUpdate } from "@common/contracts";
 export const handleClose = async (socket: AuthWebSocket, details: { code: number; reason: string }) => {
   if (socket.user) {
     const { quizId, userId, role } = socket.user;
+
     if (!QuizMemory.has(quizId)) {
       console.log(`Quiz with code ${quizId} has already been cleaned up or does not exist.`);
       return;
     }
+
     const quiz: QuizRoom = getQuiz(quizId);
     switch (role) {
       case "guest":

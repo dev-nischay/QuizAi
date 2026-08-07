@@ -2,6 +2,7 @@ import type { AuthWebSocket } from "../types/ws.types.js";
 import { startQuiz } from "../quiz/hostControls/start.quiz.js";
 import { showQuestion } from "../quiz/hostControls/question.quiz.js";
 import { stopQuiz } from "../quiz/hostControls/stop.quiz.js";
+import { showResult } from "../quiz/hostControls/result.quiz.js";
 import type {
   StartQuizRequest,
   ShowQuestionRequest,
@@ -38,10 +39,7 @@ export const hostRouter = async (socket: AuthWebSocket, message: ClientResponse)
       break;
 
     case "SHOW_RESULT":
-      // wsSend(socket, {
-      //   type: "RESPONSE",
-      //   message: "This feature will be available soon",
-      // });
+      await showResult(socket, message as ShowResultRequest);
       break;
 
     case "STOP_QUIZ":

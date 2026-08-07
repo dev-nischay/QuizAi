@@ -23,7 +23,6 @@ export type SubmitAnswerRequest = {
 
 export type ShowResultRequest = {
   type: "SHOW_RESULT";
-  questionId: string;
 };
 
 export type LeaverQuizRequest = {
