@@ -3,7 +3,7 @@ import type { checkQuizBody, createQuizBody, Question } from "@common/contracts"
 import type { TQuiz } from "../types/mongo.types.js";
 import { Quiz } from "../models/quiz.js";
 import type { ApiResponse } from "@common/contracts";
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 import { AppError } from "../utils/appError.js";
 import { httpStatus } from "../types/enums.js";
 import { QuizMemory } from "../../ws/quiz.memory.js";
@@ -25,6 +25,12 @@ export const createQuiz = async (
     return next(new AppError("Finish your current quiz before creating a new one", httpStatus.Conflict));
   }
 
+  const isWaitingQuiz = await Quiz.findOne({ createdBy: userId, gameState: "waiting" });
+
+  if (isWaitingQuiz) {
+    return next(new AppError("previous quiz must be finished before creating a new one", httpStatus.Conflict));
+  }
+
   const quiz = await Quiz.create({ title, questions, createdBy: userId, roomCode, gameState: "waiting" });
 
   console.log(`creating room with id ${roomCode}`);
@@ -33,8 +39,6 @@ export const createQuiz = async (
   if (QuizMemory.has(roomCode)) {
     return next(new AppError(`Room with id ${roomCode} is already live`, httpStatus.Conflict));
   }
-
-  console.log(QuizMemory);
 
   return res.json({
     success: true,
@@ -49,12 +53,21 @@ export const createQuiz = async (
 export const liveQuiz = async (req: Request, res: Response<ApiResponse<{ message: string }>>, next: NextFunction) => {
   const { userId, username } = req.user;
 
+  console.log(userId);
   const inProgressQuiz = await Quiz.findOne({ createdBy: userId, gameState: "in_progress" });
   if (inProgressQuiz) {
     return next(new AppError("Finish your current quiz before starting a new one", httpStatus.Conflict));
   }
 
-  const quiz = await Quiz.findOneAndUpdate({ createdBy: userId, gameState: "waiting" }, { gameState: "in_progress" });
+  const objectId = new mongoose.Types.ObjectId(userId);
+
+  const quiz = await Quiz.findOneAndUpdate(
+    { createdBy: objectId, gameState: "waiting" },
+    { $set: { gameState: "in_progress" } },
+    { returnDocument: "after" },
+  );
+
+  console.log(quiz);
 
   if (!quiz) return next(new AppError("quiz not found", httpStatus.BadRequest));
 
@@ -91,6 +104,7 @@ export const liveQuiz = async (req: Request, res: Response<ApiResponse<{ message
     users: new Map(),
     questionIndex: 0,
   });
+  console.log(QuizMemory);
 
   return res.json({ success: true, message: `Room with code: ${roomCode} is now live` });
 };
