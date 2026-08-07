@@ -1,36 +1,22 @@
 import { Trophy, Zap, Award } from "lucide-react";
-import { useLiveStore } from "../../store/liveStore";
 import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
-
+import { resetQuizState } from "../../utils/resetQuizState";
+import { useResultStore } from "../../store/resultStore";
+// data layer is fixed only there is a ui bug which will be fixed sooon
 export default function QuizResultsPage() {
-  const username = useAuthStore((state) => state.username);
-  // const leaderboard = useLiveStore((state) => state.leaderBoard);
-  const leaderboard = [
-    {
-      name: "nischay",
-      score: 200,
-    },
-    {
-      name: "dhwanit",
-      score: 400,
-    },
-    {
-      name: "anonymous12",
-      score: 800,
-    },
-    {
-      name: "random123",
-      score: 900,
-    },
-    {
-      name: "him",
-      score: 100,
-    },
-  ];
   const nav = useNavigate();
 
-  const sortedLeaderboard = [...leaderboard]
+  const result = useResultStore((state) => state.finalResult);
+
+  const handleExit = () => {
+    resetQuizState();
+    nav("/home", { replace: true });
+  };
+
+  const username = useAuthStore((state) => state.username);
+
+  const sortedLeaderboard = [...result]
     .sort((a, b) => b.score - a.score)
     .map((user, index) => ({
       ...user,
@@ -116,7 +102,7 @@ export default function QuizResultsPage() {
 
           {/* Actions */}
           <div className="grid sm:grid-cols-2 gap-4">
-            <button onClick={() => nav("/home")} className="relative group overflow-hidden rounded-xl">
+            <button onClick={handleExit} className="relative group overflow-hidden rounded-xl">
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600" />
               <div className="relative px-6 py-4 font-bold text-white flex items-center justify-center gap-2">
                 <Zap className="w-5 h-5" />
