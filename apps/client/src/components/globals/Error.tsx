@@ -2,7 +2,7 @@ import { AlertCircle, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Error({ message = "Something went wrong" }: { message: string }) {
-  const nav = useNavigate();
+  const nav= useNavigate()
   return (
     <div className=" bg-black/60  flex items-center justify-center fixed inset-0 overflow-hidden">
       <div className="relative z-50 max-w-2xl mx-auto px-6">
