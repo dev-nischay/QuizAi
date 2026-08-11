@@ -1,4 +1,3 @@
-
 export type QuizCreateModalProps = {
   questionCount: number;
   onClose: () => void;

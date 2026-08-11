@@ -3,7 +3,7 @@ import type { LeaderBoard, SubmitAnswerResponse } from "@common/contracts";
 import type { Options, Question } from "@common/contracts";
 type QuizDetails = { host: string; totalQuestionCount: number; title: string };
 type CurrentQuestion = Pick<Question, "text" | "options"> & { correctOptionIndex?: Options };
-type LivePhase = "lobby" | "active";
+type LivePhase = "lobby" | "active" | null;
 type LiveSession = {
   phase: LivePhase;
   quizDetails: QuizDetails | null;
@@ -26,7 +26,7 @@ type InititalState = Pick<
 >;
 
 const intialState: InititalState = {
-  phase: "lobby",
+  phase: null,
   quizDetails: null,
   currentAnswer: null,
   currentQuestion: null,
