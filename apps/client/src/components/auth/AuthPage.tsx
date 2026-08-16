@@ -3,20 +3,16 @@ import { useMutation } from "@tanstack/react-query";
 import { createAccount } from "../../services/createAccount";
 import { loginAccount } from "../../services/loginAccount";
 import { useNavigate } from "react-router-dom";
-import { Zap, Brain, Users, TrendingUp } from "lucide-react";
-import Feature from "./authComponents/Feature";
-import Badge from "./authComponents/Badge";
-import Input from "../globals/Input";
-import MobileLogo from "./authComponents/MobileLogo";
-import TabSwitcher from "./authComponents/TabSwitcher";
-import Button from "../globals/Button";
+import { BRAND_BULLETS } from "../../design/bullets";
 import type { AuthFormData } from "./auth.types";
 import { useFormSubmit } from "../../hooks/form-submit";
 import { loginSchema, signupSchema } from "@common/contracts";
 import { useAuthStore } from "../../store/authStore";
 import Loading from "../globals/Loading";
 import { type ApiResponse, type ApiError } from "../../services/api";
-
+import { useEffect } from "react";
+import { toggleTheme } from "../../utils/toggleTheme";
+import { SubmitButton } from "../globals/LoadingButton";
 export default function AuthPage() {
   const { fieldErrors, validator, submitCount, setFieldErrors } = useFormSubmit<AuthFormData>();
 
@@ -82,131 +78,159 @@ export default function AuthPage() {
     }
   };
 
-  if (isPending) return <Loading />;
-
   return (
-    <div>
-      <div className="  w-full lg:max-w-6xl 2xl:mt-44   mx-auto  grid grid-cols-1  lg:grid-cols-2  mt-20 lg:mt-28    ">
-        {/* Quiz Content Full Screen */}
-        <div className=" hidden h-fit lg:flex w-full flex-col    p-2 gap-6   ">
-          {/* logo */}
-          <div className="flex gap-2 items-center">
-            <div className="bg-gradient-to-br from-emerald-600 via-teal-400 to-emerald-600  p-5 rounded-2xl   ">
-              <Brain size={50} />
-            </div>
-            <div className="flex flex-col gap-2 items-center">
-              <div className="font-black text-7xl">
-                <span className="bg-gradient-to-r tracking-tight from-emerald-500 via-teal-300 to bg-emerald-500 bg-clip-text text-transparent ">
-                  Quiz
-                </span>
-                <span className="text-white">Live</span>
+    <div className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden">
+      {/* Main Layout Grid */}
+      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center z-10 mt-16 sm:mt-0">
+        {/* Hero / Brand Section */}
+        <div className="hidden lg:block order-2 lg:order-1 space-y-8 animate-fade-in ">
+          <div className="space-y-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-sans text-slate-900 dark:text-[#F1F3F7] leading-tight tracking-tight">
+              The ultimate quiz <br className="hidden sm:block" />
+              building experience.
+            </h1>
+
+            <p className="text-lg text-slate-600 dark:text-slate-400 font-sans max-w-md leading-relaxed">
+              Create, share, and analyze quizzes in real-time. Built for educators, creators, and dynamic teams.
+            </p>
+          </div>
+
+          {/* Brand Features List */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
+            {BRAND_BULLETS.map((bullet, idx) => (
+              <div key={idx} className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white dark:bg-[#1A1F2A] border border-slate-200 dark:border-white/10 flex items-center justify-center shadow-sm">
+                  <span className="text-xl leading-none select-none" style={{ color: bullet.colorHex }}>
+                    {bullet.shape}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-sans font-semibold text-sm text-slate-900 dark:text-[#F1F3F7] mb-1">
+                    {bullet.title}
+                  </h3>
+                  <p className="font-sans text-xs text-slate-500 dark:text-[#8A93A3] leading-relaxed">{bullet.desc}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-2 ">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                <p className="text-sm text-gray-400 font-mono capitiablize">Live Collabrative Platform</p>
-              </div>
-            </div>
+            ))}
           </div>
-
-          {/*  short description */}
-          <div className="flex flex-col gap-2 ml-8 relative">
-            <div className="absolute border border-emerald-800 bg-white inset-y-0 -left-8"></div>
-            <div className="text-2xl font-bold">The Future of Learning</div>
-            <div className="text-gray-400 tracking-wide">
-              Experience next-generation quiz creation powered by Web Sockets. Create, compete, and conquer.
-            </div>
-          </div>
-
-          {/*stats*/}
-          <div className="flex gap-2 items-center mt-2">
-            <Badge value="1M+" domain="QUIZZES" />
-            <Badge value="500K+" domain="USERS" />
-            <Badge value="99.9%" domain="UPTIME" />
-          </div>
-
-          {/* features */}
-          <Feature Icon={Zap} title="Instant Creation" text="creates quizzes in seconds" />
-          <Feature Icon={Users} title="Real-time Multiplayer" text="Complete with players" />
-          <Feature Icon={TrendingUp} title="Advanced Analytics" text="Track perfomance with AI insights" />
         </div>
 
-        {/* auth card */}
-        <div className="w-full h-fit max-w-3xl  lg:max-w-lg mx-auto    px-2 py-2  bg-transparent border   relative rounded-3xl border-emerald-950 bg-gradient-to-br from-slate-900  via-black to-slate-900 ">
-          {/* Borders */}
+        <div className="order-1 lg:order-2 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <div className="w-full max-w-md mx-auto rounded-2xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#141821]/80 backdrop-blur-xl p-6 sm:p-8 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
+            {/* Segmented Toggle */}
+            <div className="mb-8">
+              <div className="inline-flex p-[3px] rounded-[9px] bg-slate-100 dark:bg-[#1A1F2A] border border-slate-200 dark:border-white/10 w-full relative">
+                <button
+                  onClick={() => setTab("login")}
+                  className={`w-1/2 font-sans text-sm font-semibold px-4 py-2 rounded-md cursor-pointer transition-all duration-200 qz-focusable ${
+                    tab === "login"
+                      ? "bg-white dark:bg-[#141821] text-slate-900 dark:text-[#F1F3F7] shadow-sm dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),_0_8px_24px_-12px_rgba(0,0,0,0.6)]"
+                      : "bg-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                  }`}
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => setTab("signup")}
+                  className={`w-1/2 font-sans text-sm font-semibold px-4 py-2 rounded-md cursor-pointer transition-all duration-200 qz-focusable ${
+                    tab === "signup"
+                      ? "bg-white dark:bg-[#141821] text-slate-900 dark:text-[#F1F3F7] shadow-sm dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),_0_8px_24px_-12px_rgba(0,0,0,0.6)]"
+                      : "bg-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                  }`}
+                >
+                  Sign Up
+                </button>
+              </div>
+            </div>
 
-          <div className="absolute -top-[1px] inset-x-0 h-[1px] max-w-52 mx-auto  bg-gradient-to-r from-emerald-950 via-teal-500 to-emerald-950" />
-          <div className="absolute -bottom-[1px] inset-x-0 h-[1px] max-w-52 mx-auto  bg-gradient-to-r from-emerald-950 via-teal-500 to-emerald-950" />
-          <div className="absolute w-[1px] max-h-52 top-20 bottom-0 -right-[1px]    bg-gradient-to-b from-emerald-950 via-teal-500 to-emerald-950" />
-          <div className="absolute w-[1px] max-h-52 bottom-0 top-48  -left-[1px]   bg-gradient-to-b from-emerald-950 via-teal-500 to-emerald-950" />
-
-          {/* mobile logo */}
-          <MobileLogo />
-
-          {/* tab switcher */}
-          <TabSwitcher
-            tab={tab}
-            setTab={setTab}
-            onSwitch={() => {
-              setFieldErrors(null);
-              setGenericError(null);
-            }}
-          />
-
-          {/* input area */}
-          <div className="w-full mt-2 font-mono ">
-            <form onSubmit={handleSubmit} className="flex flex-col px-7 py-8 gap-7">
-              {tab === "signup" && (
-                <Input
-                  id="username"
-                  placeholder="eg.jackphin"
-                  ref={usernameRef}
-                  errCounter={submitCount}
-                  error={fieldErrors?.username ?? ""}
-                />
-              )}
-
-              <Input
-                id="email address"
-                placeholder="name@example.com"
-                ref={emailRef}
-                errCounter={submitCount}
-                error={fieldErrors?.email ?? ""}
-              />
-
-              <Input
-                id="password"
-                placeholder="....."
-                ref={passwordRef}
-                className=" border border-blue-900 hover:border-blue-700 focus:border-blue-700 "
-                error={fieldErrors?.password ?? ""}
-                errCounter={submitCount}
-              />
-
-              <div className="flex gap-1 relative   items-center mt-4">
-                <input type="checkbox" className="size-4" />
-                <label htmlFor="check" className="text-sm text-gray-400   tracking-wider  font-semibold ">
-                  Remebmer me
-                </label>
-                {String(genericError).length > 0 && (
-                  <div className="absolute  inset-0 pointer-events-none animate-pulse ">
-                    <div className="text-center  text-red-500">{genericError}</div>
-                  </div>
-                )}
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Conditional Name Field for Signup */}
+              <div
+                className={`space-y-4 transition-all duration-300 overflow-hidden ${tab === "signup" ? "max-h-24 opacity-100" : "max-h-0 opacity-0 m-0"}`}
+              >
+                <div className="space-y-1.5">
+                  <label className="font-sans font-medium text-xs text-slate-700 dark:text-slate-300">Full Name</label>
+                  <input
+                    type="text"
+                    ref={usernameRef}
+                    placeholder="John Doe"
+                    required={tab === "signup"}
+                    className="w-full bg-slate-50 dark:bg-[#1A1F2A] border border-slate-200 dark:border-white/10 rounded-lg p-3 font-sans text-sm text-slate-900 dark:text-[#F1F3F7] placeholder:text-slate-400 dark:placeholder:text-slate-600 qz-focusable transition-colors"
+                  />
+                </div>
               </div>
 
-              <Button type="submit" className="hover:scale-105">
-                <span>
-                  <Zap />
-                </span>
-                <span className="3xl:text-xl animate-pulse ">
-                  {tab === "login" ? "ACCESS SYSTEM" : "INITIALIZE ACCOUNT"}
-                </span>
-                <span>
-                  <Zap />
-                </span>
-              </Button>
+              <div className="space-y-1.5">
+                <label className="font-sans font-medium text-xs text-slate-700 dark:text-slate-300">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  ref={emailRef}
+                  placeholder="you@example.com"
+                  required
+                  className="w-full bg-slate-50 dark:bg-[#1A1F2A] border border-slate-200 dark:border-white/10 rounded-lg p-3 font-sans text-sm text-slate-900 dark:text-[#F1F3F7] placeholder:text-slate-400 dark:placeholder:text-slate-600 qz-focusable transition-colors"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="font-sans font-medium text-xs text-slate-700 dark:text-slate-300">Password</label>
+                  {tab === "login" && (
+                    <a
+                      href="#"
+                      className="font-sans font-medium text-xs text-emerald-600 dark:text-emerald-400 hover:underline qz-focusable rounded"
+                    >
+                      Forgot password?
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="password"
+                  ref={passwordRef}
+                  placeholder="••••••••"
+                  required
+                  className="w-full bg-slate-50 dark:bg-[#1A1F2A] border border-slate-200 dark:border-white/10 rounded-lg p-3 font-sans text-sm text-slate-900 dark:text-[#F1F3F7] placeholder:text-slate-400 dark:placeholder:text-slate-600 qz-focusable transition-colors tracking-widest"
+                />
+              </div>
+
+              <SubmitButton isLoading={isPending} tab={tab} />
             </form>
+
+            <div className="mt-8 pt-6 border-t border-slate-100 dark:border-white/10">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200 dark:border-white/10"></div>
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="px-2 bg-white dark:bg-[#141821] text-slate-500 dark:text-slate-400 font-sans">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="w-full mt-6 font-sans font-medium text-sm rounded-lg px-4 py-3 inline-flex items-center justify-center gap-2 border border-slate-200 dark:border-white/10 bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-all qz-focusable"
+              >
+                <i className="ph-fill ph-google-logo text-xl text-rose-500"></i>
+                Google
+              </button>
+            </div>
           </div>
+
+          <p className="text-center font-sans text-xs text-slate-500 dark:text-slate-400 mt-6">
+            By proceeding, you agree to our{" "}
+            <a href="#" className="underline hover:text-slate-700 dark:hover:text-slate-200">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="#" className="underline hover:text-slate-700 dark:hover:text-slate-200">
+              Privacy Policy
+            </a>
+            .
+          </p>
         </div>
       </div>
     </div>
