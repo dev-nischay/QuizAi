@@ -3,7 +3,6 @@ import { useShallow } from "zustand/shallow";
 import { LiveDot } from "./quiz-live-components/LiveDot";
 import { PrimaryButton } from "../../globals/Button";
 import { PlayerInLobby } from "./quiz-live-components/PlayersInLobby";
-import { useRoomStore } from "../../../store/roomStore";
 
 export default function Lobby({ role }: { role: string }) {
   const onStart = () => {
@@ -39,7 +38,6 @@ export default function Lobby({ role }: { role: string }) {
 
 function LobbySection() {
   const quizDetails = useLiveStore(useShallow((state) => state.quizDetails));
-  const quizId = useRoomStore(useShallow((state) => state.roomCode));
 
   return (
     <div className="flex flex-col items-center  w-full max-w-5xl mx-auto  ">
@@ -54,7 +52,7 @@ function LobbySection() {
         className="qz-fade-in font-mono-plex font-bold text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] tracking-[0.15em] text-slate-900 dark:text-[#F1F3F7] mb-6 sm:mb-8 drop-shadow-sm select-all text-center"
         style={{ animationDelay: "50ms" }}
       >
-        <span className="text-emerald-600 dark:text-emerald-400">{quizId}</span>
+        <span className="text-emerald-600 dark:text-emerald-400">{quizDetails?.roomCode}</span>
       </div>
 
       {/* Quiz Title */}

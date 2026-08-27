@@ -36,7 +36,12 @@ export const joinRoom = async (socket: AuthWebSocket, message: JoinQuizRequest) 
   wsSend(socket, {
     type: "USER_JOINED",
     message: `room joined with id ${quizId}`,
-    quizDetails: { host: quiz.hostConnection.name, totalQuestionCount: totalQuestions, title: quiz.title },
+    quizDetails: {
+      host: quiz.hostConnection.name,
+      totalQuestionCount: totalQuestions,
+      title: quiz.title,
+      roomCode: quiz.roomCode,
+    },
   });
 
   wsSend(socket, {

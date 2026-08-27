@@ -27,7 +27,7 @@ export const startQuiz = async (socket: AuthWebSocket, message: StartQuizRequest
     type: "QUIZ_STARTED",
     quizId,
     message: "Quiz is now live",
-    quizDetails: { host: quiz.hostConnection.name, totalQuestionCount, title: quiz.title },
+    quizDetails: { host: quiz.hostConnection.name, totalQuestionCount, title: quiz.title, roomCode: quiz.roomCode },
   });
 
   wsSend(socket, {

@@ -13,7 +13,7 @@ export type LeaderBoard = {
 
 export type JoinResponse = {
   type: "USER_JOINED";
-  quizDetails: { host: string; totalQuestionCount: number; title: string };
+  quizDetails: { host: string; totalQuestionCount: number; title: string; roomCode: string };
   message: string;
 };
 
@@ -24,7 +24,7 @@ export type FinalResult = {
 
 export type StartResponse = {
   type: "QUIZ_STARTED";
-  quizDetails: { host: string; totalQuestionCount: number; title: string };
+  quizDetails: { host: string; totalQuestionCount: number; title: string; roomCode: string };
   quizId: string;
   message: string;
 };

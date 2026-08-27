@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { LeaderBoard, SubmitAnswerResponse } from "@common/contracts";
 import type { Options, Question } from "@common/contracts";
-type QuizDetails = { host: string; totalQuestionCount: number; title: string };
+type QuizDetails = { host: string; totalQuestionCount: number; title: string; roomCode: string };
 type CurrentQuestion = Pick<Question, "text" | "options"> & { correctOptionIndex?: Options };
 type LivePhase = "lobby" | "active" | null;
 type LiveSession = {
@@ -42,7 +42,14 @@ export const useLiveStore = create<LiveSession>((set) => ({
   },
 
   setQuizDetails(details) {
-    set({ quizDetails: { host: details.host, totalQuestionCount: details.totalQuestionCount, title: details.title } });
+    set({
+      quizDetails: {
+        host: details.host,
+        totalQuestionCount: details.totalQuestionCount,
+        title: details.title,
+        roomCode: details.roomCode,
+      },
+    });
   },
 
   setLeaderBoard: (leaderBoard) => {
