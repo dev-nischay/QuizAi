@@ -2,8 +2,13 @@ import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/authStore";
-import { Rocket, User, Users } from "lucide-react";
+import { Rocket, Users } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import type { ApiError, ApiResponse } from "@common/contracts";
+import { checkQuiz } from "../../../services/checkQuiz";
+
 export type RoomProps = {
+  roomCode: string;
   onClose: () => void;
 };
 
@@ -14,6 +19,43 @@ export default function QuizHomePage() {
   const nav = useNavigate();
   const [isJoining, setIsJoining] = useState<boolean>(false);
 
+  const checkMutation = useMutation<
+    ApiResponse<{
+      success: true;
+      quiz: {
+        _id: string;
+      };
+    }>,
+    ApiError,
+    {
+      roomCode: string;
+    }
+  >({
+    mutationFn: checkQuiz,
+    onSuccess: () => {
+      if (roomCode.trim().length >= 5) {
+        console.log("Joining room:", roomCode);
+        setRole("guest");
+        setJoinStatus({ type: "success", message: "Connecting to room..." });
+
+        // nav("/live") uncomment this when live page is completed
+        alert("redirect to live page now ");
+
+        setTimeout(() => {
+          setIsJoining(false);
+          setJoinStatus({ type: "", message: "" });
+          setRoomCode("");
+        }, 1500);
+      }
+    },
+    onError: (err) => {
+      console.log(err);
+      setJoinStatus({ type: "error", message: err.error });
+      setIsJoining(false);
+      setTimeout(() => setJoinStatus({ type: "", message: "" }), 3000);
+    },
+  });
+
   const handleCreateQuiz = () => {
     console.log("redirecting to quiz builder");
     setRole("host");
@@ -22,10 +64,7 @@ export default function QuizHomePage() {
 
   const handleJoinQuiz = (e: any) => {
     e.preventDefault();
-    console.log("redirecting to quiz builder");
-    setRole("guest");
 
-    // nav("/");
     const code = roomCode.trim().toUpperCase();
 
     if (code.length < 6) {
@@ -37,33 +76,15 @@ export default function QuizHomePage() {
     setIsJoining(true);
     setJoinStatus({ type: "", message: "" });
 
-    // Simulate network request to join room
-    // send req and set isjoining to true then wait for the promise to resolve and pass the error in status
-
-    setTimeout(() => {
-      if (code === "INVALID") {
-        setJoinStatus({ type: "error", message: "Room not found or has already ended." });
-        setIsJoining(false);
-        setTimeout(() => setJoinStatus({ type: "", message: "" }), 3000);
-      } else {
-        setJoinStatus({ type: "success", message: "Connecting to room..." });
-        // In a real app, this would route to a waiting room or live quiz page
-        alert("redirected to live page ");
-        setTimeout(() => {
-          setIsJoining(false);
-          setJoinStatus({ type: "", message: "" });
-          setRoomCode("");
-        }, 1500);
-      }
-    }, 800);
+    checkMutation.mutate({ roomCode });
+    return;
   };
 
   const handleCodeChange = (e: any) => {
-    // Force uppercase and limit length if desired
     const val = e.target.value
       .toUpperCase()
       .replace(/[^A-Z0-9]/g, "")
-      .slice(0, 8);
+      .slice(0, 6);
     setRoomCode(val);
   };
 
