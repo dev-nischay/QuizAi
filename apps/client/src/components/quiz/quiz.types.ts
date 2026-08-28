@@ -1,4 +1,3 @@
-import type { QuestionControls } from "./quiz-build/questionControls";
 import type { Question, Options } from "@common/contracts";
 export type OptionProps = {
   placeholder: string;
@@ -7,31 +6,37 @@ export type OptionProps = {
   selectedOption: number;
 };
 
-export type QuestionBuilderProps = {
-  setActive: React.Dispatch<React.SetStateAction<boolean>>;
-
-  quesControls: QuestionControls;
-  isEditing: boolean;
-  editQuestion: Question | null;
-  setEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  setEditQuestion: React.Dispatch<React.SetStateAction<Question | null>>;
+export type EditModalProps = {
+  saveEditing: (question: Question) => void;
+  cancelEditing: () => void;
+  editQuestion: Question;
+  index: number;
 };
 
-export type QuizFormData = {
-  title: string;
-  questions: Question[];
-};
-
-export type QuizResponse = {
-  title: string;
-  roomCode: string;
-};
-
-export type QuestionPreviewProps = Question & {
-  quesControls: QuestionControls;
+export type QuestionListProps = {
+  text: string;
+  correctOptionIndex: Options;
+  options: [string, string, string, string];
+  _id: string;
+  startEditing: (_id: string) => void;
   i: number;
-  setEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  setEditQuestion: React.Dispatch<React.SetStateAction<Question | null>>;
+};
+
+export type OptionListProps = {
+  index: number;
+  color: string;
+  shape: string;
+  correctOptionIndex: Options;
+  opt: string;
+};
+
+export type OptionEditProps = {
+  optIdx: number;
+  shape: string;
+  colorHex: string;
+  text: string;
+  correctOptionIndex: Options;
+  onCorrect: () => void;
 };
 
 export type HostOptionProps = {
@@ -39,4 +44,10 @@ export type HostOptionProps = {
   optionIndex: Options;
   correctOptionIndex: Options;
   show: boolean;
+};
+
+export type AIQuestionModalProps = {
+  setQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
+  setQuizTitle: React.Dispatch<React.SetStateAction<string>>;
+  onClose: () => void;
 };
