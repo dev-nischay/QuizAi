@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { LeaderBoard, SubmitAnswerResponse } from "@common/contracts";
-import type { Options, Question } from "@common/contracts";
+import type { Options, Question, Vote } from "@common/contracts";
 type QuizDetails = { host: string; totalQuestionCount: number; title: string; roomCode: string };
 type CurrentQuestion = Pick<Question, "text" | "options"> & { correctOptionIndex?: Options } & {
   currentQuestionIndex: number;
@@ -13,7 +13,9 @@ type LiveSession = {
   liveUsers: string[];
   leaderBoard: LeaderBoard[];
   currentAnswer: Omit<SubmitAnswerResponse, "type"> | null;
+  votes: Vote[];
   setPhase: (phase: LivePhase) => void;
+  setVotes: (votes: Vote[]) => void;
   setAnswer: (answer: Omit<SubmitAnswerResponse, "type">) => void;
   setQuestion: (question: CurrentQuestion) => void;
   setQuizDetails: (details: QuizDetails) => void;
@@ -24,7 +26,7 @@ type LiveSession = {
 
 type InititalState = Pick<
   LiveSession,
-  "phase" | "quizDetails" | "currentQuestion" | "currentAnswer" | "leaderBoard" | "liveUsers"
+  "phase" | "quizDetails" | "currentQuestion" | "currentAnswer" | "leaderBoard" | "liveUsers" | "votes"
 >;
 
 const intialState: InititalState = {
@@ -34,6 +36,7 @@ const intialState: InititalState = {
   currentQuestion: null,
   liveUsers: [],
   leaderBoard: [],
+  votes: [],
 };
 
 export const useLiveStore = create<LiveSession>((set) => ({
@@ -41,6 +44,10 @@ export const useLiveStore = create<LiveSession>((set) => ({
 
   setQuestion: (question) => {
     set({ currentQuestion: question });
+  },
+
+  setVotes(votes) {
+    set({ votes });
   },
 
   setQuizDetails(details) {

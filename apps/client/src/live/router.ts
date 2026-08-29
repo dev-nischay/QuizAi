@@ -1,14 +1,16 @@
 import type { ServerResponse } from "@common/contracts";
 import { useLiveStore } from "../store/liveStore";
 import { useResultStore } from "../store/resultStore";
+import toast from "react-hot-toast";
 
 export const messageRouter = (response: ServerResponse) => {
-  const { setQuestion, setLivePlayers, setLeaderBoard, setAnswer, setPhase, setQuizDetails } = useLiveStore.getState();
+  const { setQuestion, setLivePlayers, setLeaderBoard, setAnswer, setPhase, setQuizDetails, setVotes } =
+    useLiveStore.getState();
   const { setFinalResult } = useResultStore.getState();
   switch (response.type) {
     case "QUESTION":
-      const { text, options, correctOptionIndex } = response; // correctOptionIndex only available for host will remain undefined for other
-      setQuestion({ text, options, correctOptionIndex });
+      const { text, options, correctOptionIndex, currentQuestionIndex } = response; // correctOptionIndex only available for host will remain undefined for other
+      setQuestion({ text, options, correctOptionIndex, currentQuestionIndex });
       break;
 
     case "ANSWER_RESULT":
@@ -48,15 +50,30 @@ export const messageRouter = (response: ServerResponse) => {
       // redirect to live page
       break;
 
+    case "NOTIFICATION":
+      toast(response.message, {
+        className:
+          "!bg-white dark:!bg-[#141821] !text-slate-900 dark:!text-[#F1F3F7] !border !border-indigo-200 dark:!border-indigo-500/30 !rounded-xl !shadow-lg",
+      });
+      break;
+
     case "ERROR":
       console.log(response.error);
-      // show either error toast or error modal depending upon the server instructions
+      toast.error(response.error ?? "Something went wrong", {
+        className:
+          "!bg-white dark:!bg-[#141821] !text-slate-900 dark:!text-[#F1F3F7] !border !border-red-200 dark:!border-rose-400/20 !rounded-xl !shadow-lg",
+      });
+
       break;
 
     case "LEADERBOARD":
       const { data } = response;
       setLeaderBoard(data);
       // update leaderboard
+      break;
+
+    case "POLLS":
+      setVotes(response.votes);
       break;
 
     default:
