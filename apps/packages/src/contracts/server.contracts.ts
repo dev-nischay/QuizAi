@@ -2,7 +2,7 @@ import type { Question, Options } from "../types/global.types.js";
 
 export type Result = {
   name: string;
-  selectedOption: Options;
+  selectedOptionIndex: Options;
 };
 
 export type LeaderBoard = {
@@ -34,6 +34,7 @@ export type QuestionResponse = Pick<Question, "text" | "options"> & {
   quizId: string;
   questionId: string;
   correctOptionIndex?: Options; // only sent to host
+  currentQuestionIndex: number;
 };
 
 export type SubmitAnswerResponse = {
