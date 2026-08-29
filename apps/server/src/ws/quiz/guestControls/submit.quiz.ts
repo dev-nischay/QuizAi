@@ -7,31 +7,21 @@ import { submitAnswerSchema, type submitAnswerBody } from "../../zod/quizActions
 import { wsSend } from "../../utils/wsSend.js";
 import type { SubmitAnswerResponse } from "@common/contracts";
 import { leaderboard } from "../leaderBoard.quiz.js";
+import { PollsUpdate } from "../hostControls/polls.quiz.js";
 export const submitAnswer = async (socket: AuthWebSocket, message: SubmitAnswerRequest) => {
   const { quizId, userId } = socket.user;
 
-  // const { questionId, selectedOptionIndex } = zodParser(message, submitAnswerSchema) as submitAnswerBody;
   const { selectedOptionIndex } = zodParser(message, submitAnswerSchema) as submitAnswerBody;
 
   const quiz = getQuiz(quizId);
 
   const { currentQuestionId } = quiz;
-  // if (questionId !== quiz.currentQuestionId) {
-  //   throw new wsError("user can only answer to live question", true);
-  // }
-
-  // if (!quiz.questions.has(questionId)) {
-  //   throw new wsError("question not found", true, 1003);
-  // }
 
   const currentUser = quiz.users.get(userId);
 
   if (!currentUser || currentUser === undefined) {
     throw new wsError("user not found");
   }
-
-  // ------------ user is valid as well as his data
-  // replace current with question if it fails
 
   if (!currentQuestionId) {
     throw new wsError("question not live yet", false);
@@ -62,6 +52,10 @@ export const submitAnswer = async (socket: AuthWebSocket, message: SubmitAnswerR
   }
   currentQuestionEntry.set(userId, selectedOptionIndex);
   // ^ entry for the user for current question in answeres map
+
+  PollsUpdate(quiz);
+
+  // ^ poll update to the host when user submits an answer
 
   if (correctAnswerIndex === selectedOptionIndex) {
     currentUser.score += 100; // udpating the score

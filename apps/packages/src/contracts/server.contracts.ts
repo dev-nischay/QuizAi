@@ -46,8 +46,8 @@ export type SubmitAnswerResponse = {
   message: string;
 };
 
-export type ShowResultResponse = {
-  type: "RESULT";
+export type PollsUpdates = {
+  type: "POLLS";
   quizId: string;
   questionId: string;
   results: Result[];
@@ -85,7 +85,7 @@ export type ServerResponse =
   | StartResponse
   | QuestionResponse
   | SubmitAnswerResponse
-  | ShowResultResponse
+  | PollsUpdates
   | ServerError
   | LeaderboardUpdates
   | LobbyUpdates

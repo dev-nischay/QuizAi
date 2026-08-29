@@ -6,6 +6,8 @@ import { wsError } from "../utils/wsError.js";
 import { leaveQuiz } from "../quiz/guestControls/leave.quiz.js";
 import type { JoinQuizRequest, SubmitAnswerRequest, LeaverQuizRequest, ClientResponse } from "@common/contracts";
 
+type GuestRequest = JoinQuizRequest | SubmitAnswerRequest | LeaverQuizRequest;
+
 export const guestRouter = async (socket: AuthWebSocket, message: ClientResponse) => {
   const typeRequest = message.type;
   const { userId, quizId, role } = socket.user;

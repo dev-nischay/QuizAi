@@ -16,11 +16,6 @@ export interface AuthWebSocket extends WebSocket {
 
 export type SocketUser = { ws: AuthWebSocket; name: string; score: number };
 
-export type Result = {
-  name: string;
-  selectedOption: Options;
-};
-
 export type LeaderBoard = {
   name: string;
   score: number;

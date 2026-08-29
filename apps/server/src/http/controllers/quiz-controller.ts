@@ -149,7 +149,7 @@ export const checkQuiz = async (req: Request, res: Response, next: NextFunction)
 
   if (!quizInMemory || quizInMemory.phase !== "lobby") {
     if (!quizInMemory || !quizInMemory.phase) {
-      return next(new AppError("Host has not started the lobby yet", httpStatus.BadRequest));
+      return next(new AppError("Host has not started the quiz yet", httpStatus.BadRequest));
     }
     if (quizInMemory.phase === "active") {
       return next(new AppError("The quiz has already started", httpStatus.BadRequest));

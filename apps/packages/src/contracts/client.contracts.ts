@@ -21,10 +21,6 @@ export type SubmitAnswerRequest = {
   selectedOptionIndex: Options;
 };
 
-export type ShowResultRequest = {
-  type: "SHOW_RESULT";
-};
-
 export type LeaverQuizRequest = {
   type: "LEAVE_QUIZ";
 };
@@ -33,7 +29,6 @@ export type ClientResponse =
   | JoinQuizRequest
   | ShowQuestionRequest
   | SubmitAnswerRequest
-  | ShowResultRequest
   | StartQuizRequest
   | StopQuizRequest
   | LeaverQuizRequest;
