@@ -2,7 +2,9 @@ import { create } from "zustand";
 import type { LeaderBoard, SubmitAnswerResponse } from "@common/contracts";
 import type { Options, Question } from "@common/contracts";
 type QuizDetails = { host: string; totalQuestionCount: number; title: string; roomCode: string };
-type CurrentQuestion = Pick<Question, "text" | "options"> & { correctOptionIndex?: Options };
+type CurrentQuestion = Pick<Question, "text" | "options"> & { correctOptionIndex?: Options } & {
+  currentQuestionIndex: number;
+};
 type LivePhase = "lobby" | "active" | null;
 type LiveSession = {
   phase: LivePhase;

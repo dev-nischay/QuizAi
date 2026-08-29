@@ -48,6 +48,7 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
       questionId: currentQuestion._id,
       text: currentQuestion.text,
       options: currentQuestion.options,
+      currentQuestionIndex: quiz.questionIndex,
     };
 
     // creating current question entry in answered map
@@ -65,6 +66,7 @@ export const showQuestion = async (socket: AuthWebSocket, message: ShowQuestionR
       text: currentQuestion.text,
       options: currentQuestion.options,
       correctOptionIndex: currentQuestion.correctOptionIndex,
+      currentQuestionIndex: quiz.questionIndex,
     });
 
     // broadcasting current question to all the users
