@@ -5,23 +5,18 @@ import { loginAccount } from "../../services/loginAccount";
 import { useNavigate } from "react-router-dom";
 import { BRAND_BULLETS } from "../../design/bullets";
 import type { AuthFormData } from "./auth.types";
-import { useFormSubmit } from "../../hooks/form-submit";
-import { loginSchema, signupSchema } from "@common/contracts";
 import { useAuthStore } from "../../store/authStore";
-import Loading from "../globals/Loading";
 import { type ApiResponse, type ApiError } from "../../services/api";
-import { useEffect } from "react";
-import { toggleTheme } from "../../utils/toggleTheme";
 import { SubmitButton } from "../globals/LoadingButton";
+import { Toast } from "../../utils/customToast";
+import { ErrorModal } from "../globals/Error";
 export default function AuthPage() {
-  const { fieldErrors, validator, submitCount, setFieldErrors } = useFormSubmit<AuthFormData>();
-
-  const [genericError, setGenericError] = useState<string | null>(null);
   const setUsername = useAuthStore((state) => state.setUsername);
   const setToken = useAuthStore((state) => state.setToken);
   const nav = useNavigate();
   const [tab, setTab] = useState<"login" | "signup">("login");
   const usernameRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -35,9 +30,7 @@ export default function AuthPage() {
     onError: (err) => {
       console.log(err);
 
-      err.fieldErrors && setFieldErrors(err.fieldErrors);
-
-      setGenericError(err.error);
+      Toast.err(err.error);
     },
   });
 
@@ -48,6 +41,8 @@ export default function AuthPage() {
   >({
     mutationFn: loginAccount,
     onSuccess: ({ data }) => {
+      Toast.success("login succesfull");
+
       const token = data?.token;
       const username = data?.username;
       if (token) setToken(token);
@@ -56,8 +51,7 @@ export default function AuthPage() {
       passwordRef.current && (passwordRef.current.value = "");
     },
     onError: (err) => {
-      err.fieldErrors && setFieldErrors(err.fieldErrors);
-      setGenericError(err.error);
+      Toast.err(err.error);
     },
   });
 
@@ -70,16 +64,14 @@ export default function AuthPage() {
     const password = passwordRef.current?.value ?? "";
 
     if (tab === "signup") {
-      const isValid = validator({ username, email, password }, signupSchema);
-      if (isValid) signupMutation.mutate({ username, email, password });
+      signupMutation.mutate({ username, email, password });
     } else {
-      const isValid = validator({ email, password }, loginSchema);
-      if (isValid) loginMutation.mutate({ email, password });
+      loginMutation.mutate({ email, password });
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden">
+    <div className="relative h-screen flex items-center justify-center p-6 overflow-hidden">
       {/* Main Layout Grid */}
       <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center z-10 mt-16 sm:mt-0">
         {/* Hero / Brand Section */}

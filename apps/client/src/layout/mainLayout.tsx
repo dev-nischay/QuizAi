@@ -1,6 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { toggleTheme } from "../utils/toggleTheme";
 import { Moon, RadioTower } from "lucide-react";
+import { Toaster } from "react-hot-toast";
+
 export default function MainLayout() {
   return (
     <div className="antialiased text-slate-900  min-h-screen  px-2 lg:px-5 py-2  dark:text-[#F1F3F7] transition-colors duration-300 relative overflow-hidden">
@@ -26,6 +28,7 @@ export default function MainLayout() {
         </button>
       </nav>
       <Outlet />
+      <Toaster position="bottom-left" reverseOrder={true} />
     </div>
   );
 }
