@@ -1,55 +1,43 @@
-import { Zap, Home, RefreshCw } from "lucide-react";
-
-export default function NotFoundPage() {
+import { useNavigate } from "react-router-dom";
+export default function NotFoundPage({ code = 404, message = "Page not found" }) {
+  const nav = useNavigate();
   return (
-    <div className=" min-h-screen  bg-transparent flex justify-center items-center relative overflow-hidden">
-      <div>
-        <div className="relative z-10 first-letter: max-w-4xl mx-auto px-6 text-center">
-          {/* Large 404 */}
-          <div className="mb-8">
-            <h1 className="text-9xl md:text-[200px] font-black leading-none mb-4">
-              <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 bg-clip-text text-transparent">
-                404
-              </span>
-            </h1>
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="h-px w-16 bg-gradient-to-r from-transparent to-emerald-500"></div>
-              <Zap className="w-6 h-6 text-emerald-500 animate-pulse" />
-              <div className="h-px w-16 bg-gradient-to-l from-transparent to-emerald-500"></div>
-            </div>
-          </div>
+    <div className="relative flex-grow flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden  h-screen">
+      {/* Main Content Area */}
+      <div className="z-10 flex flex-col items-center justify-center text-center mt-12 sm:mt-0 max-w-2xl w-full animate-fade-in">
+        {/* Error Code Container */}
+        <div className="relative mb-6">
+          {/* Decorative blur behind the error code */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-rose-500/20 dark:bg-rose-400/20 blur-3xl rounded-full z-0"></div>
 
-          {/* Message */}
-          <div className="bg-gradient-to-br from-gray-900/90 via-black/90 to-gray-900/90 backdrop-blur-2xl rounded-3xl border border-emerald-500/30 p-12 mb-8">
-            <h2 className="text-4xl font-black text-white mb-4">Page Not Found</h2>
-            <p className="text-gray-400 text-lg mb-6 max-w-2xl mx-auto">
-              The page you're looking for seems to have vanished into the digital void. It might have been moved,
-              deleted, or never existed in the first place.
-            </p>
+          <h1 className="relative z-10 text-8xl sm:text-9xl font-mono font-bold text-slate-900 dark:text-[#F1F3F7] tracking-tighter drop-shadow-sm">
+            {code}
+          </h1>
+        </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => (window.location.href = "/")}
-                className="relative group overflow-hidden px-8 py-4 rounded-xl"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 opacity-0 group-hover:opacity-100 blur-xl transition-opacity"></div>
-                <div className="relative font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2">
-                  <Home className="w-5 h-5" />
-                  Back to Home
-                </div>
-              </button>
+        {/* Error Text Details */}
+        <h2 className="text-2xl sm:text-3xl font-bold font-sans text-slate-800 dark:text-slate-200 mb-3">{message}</h2>
+        <p className="text-base sm:text-lg text-slate-500 dark:text-[#8A93A3] font-sans max-w-md mx-auto mb-10 leading-relaxed">
+          {"maybe its lost in the void"}
+        </p>
 
-              <button
-                onClick={() => window.history.back()}
-                className="px-8 py-4 bg-black/30 border border-emerald-500/30 rounded-xl hover:bg-black/50 hover:border-emerald-500/50 transition-all text-white font-bold uppercase tracking-wider flex items-center justify-center gap-2"
-              >
-                <RefreshCw className="w-5 h-5" />
-                Go Back
-              </button>
-            </div>
-          </div>
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <button
+            onClick={() => window.history.back()}
+            className="w-full sm:w-auto font-sans font-medium text-sm rounded-lg px-6 py-3 inline-flex items-center justify-center gap-2 border border-slate-200 dark:border-white/10 bg-white dark:bg-[#141821] text-slate-700 dark:text-[#F1F3F7] hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-all shadow-sm qz-focusable"
+          >
+            <i className="ph-bold ph-arrow-left text-lg"></i>
+            Go Back
+          </button>
+
+          <button
+            onClick={() => nav("/home")}
+            className="w-full sm:w-auto font-sans font-semibold text-sm text-white bg-emerald-600 dark:bg-emerald-400 hover:brightness-105 active:brightness-95 rounded-lg px-6 py-3 inline-flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),_0_12px_32px_-16px_rgba(0,0,0,0.6)] qz-focusable dark:text-slate-900"
+          >
+            <i className="ph-bold ph-house text-lg"></i>
+            Return Home
+          </button>
         </div>
       </div>
     </div>

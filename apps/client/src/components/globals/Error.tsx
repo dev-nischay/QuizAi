@@ -1,57 +1,52 @@
-import { AlertCircle, Home } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { TriangleAlert } from "lucide-react";
 
-export default function Error({ message = "Something went wrong" }: { message: string }) {
-  const nav= useNavigate()
+export function ErrorModal({ onClose, onHome }: { onClose: () => void; onHome: () => void }) {
   return (
-    <div className=" bg-black/60  flex items-center justify-center fixed inset-0 overflow-hidden">
-      <div className="relative z-50 max-w-2xl mx-auto px-6">
-        <div className="bg-gradient-to-br from-gray-900/90 via-black/90 to-gray-900/90 backdrop-blur-2xl rounded-3xl border border-red-500/30 overflow-hidden">
-          {/* Top border glow */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent"></div>
+    <div className="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+      <div className="bg-white dark:bg-[#141821] rounded-2xl border border-slate-200 dark:border-white/10 w-full max-w-md shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col relative animate-pop-in">
+        {/* Top Accent Bar */}
+        <div className="w-full h-1.5 bg-rose-500 dark:bg-rose-400"></div>
 
-          <div className="p-12 text-center">
-            {/* Error Icon */}
-            <div className="relative w-24 h-24 mx-auto mb-6">
-              <div className="absolute inset-0 bg-red-500 blur-3xl opacity-50 animate-pulse"></div>
-              <div className="relative w-full h-full bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center border border-red-400/30">
-                <AlertCircle className="w-12 h-12 text-white" />
-              </div>
-            </div>
-
-            {/* Error Message */}
-            <h2 className="text-3xl font-black text-white mb-3">Oops! Error Detected</h2>
-            <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto capitalize">{message}</p>
-
-            {/* Error Code Display */}
-            <div className="bg-black/50 border border-red-500/20 rounded-xl p-4 mb-8 font-mono text-red-400 text-sm ">
-              ERROR_CODE: SYSTEM_FAILURE_001
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button className="relative group overflow-hidden px-8 py-4 rounded-xl">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
-                <div
-                  onClick={() => nav(-1)}
-                  className="relative font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2"
-                >
-                  Back
-                </div>
-              </button>
-
-              <button
-                onClick={() => nav("/")}
-                className="px-8 py-4 bg-gray-800/50 border border-gray-700 rounded-xl hover:bg-gray-800 transition-all text-white font-bold uppercase tracking-wider flex items-center justify-center gap-2"
-              >
-                <Home className="w-5 h-5" />
-                Go Home
-              </button>
-            </div>
+        <div className="p-8 pb-6 flex flex-col items-center text-center">
+          {/* Error Icon Wrapper */}
+          <div className="w-16 h-16 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-6 shadow-sm relative">
+            <div className="absolute inset-0 rounded-2xl bg-rose-500/20 dark:bg-rose-400/20 animate-ping opacity-50"></div>
+            <i className="relative z-10">
+              <TriangleAlert size={15} />
+            </i>
           </div>
 
-          {/* Bottom border glow */}
-          <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent"></div>
+          <h3 className="font-sans font-bold text-2xl text-slate-900 dark:text-[#F1F3F7] mb-2 tracking-tight">
+            Something went wrong
+          </h3>
+
+          <p className="font-sans text-sm text-slate-500 dark:text-[#8A93A3] leading-relaxed mb-2">
+            We encountered an unexpected error while processing your request. Please try again or return to the
+            dashboard.
+          </p>
+
+          <div className="bg-slate-50 dark:bg-[#1A1F2A] border border-slate-200 dark:border-white/10 rounded-lg py-2 px-4 mt-4 w-full text-left">
+            <p className="font-mono text-xs text-slate-500 dark:text-slate-400">Error Code: ERR_NETWORK_503</p>
+          </div>
+        </div>
+
+        {/* Modal Footer Actions */}
+        <div className="px-6 py-5 bg-slate-50 dark:bg-[#1A1F2A]/50 border-t border-slate-200 dark:border-white/10 flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={onClose}
+            className="w-full sm:w-1/2 font-sans font-medium text-sm rounded-lg px-4 py-2.5 border text-slate-700 border-slate-200 bg-white hover:bg-slate-50 dark:text-[#F1F3F7] dark:border-white/10 dark:bg-[#141821] dark:hover:bg-white/5 transition-all cursor-pointer qz-focusable shadow-sm flex items-center justify-center gap-2"
+          >
+            <i className="ph-bold ph-arrow-left text-lg"></i>
+            Go Back
+          </button>
+
+          <button
+            onClick={onHome}
+            className="w-full sm:w-1/2 font-sans font-semibold text-sm text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 rounded-lg px-4 py-2.5 inline-flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm qz-focusable"
+          >
+            <i className="ph-bold ph-house text-lg"></i>
+            Return Home
+          </button>
         </div>
       </div>
     </div>

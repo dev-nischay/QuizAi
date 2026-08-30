@@ -1,14 +1,11 @@
 import { Outlet, Navigate } from "react-router-dom";
-import { useEffect } from "react";
 
 export const WithAuth = () => {
-  useEffect(() => {
-    const token = localStorage.getItem("Authorization")?.split(" ")[1] as string | null;
+  const token = localStorage.getItem("Authorization")?.split(" ")[1];
 
-    if (!token || token.length === 0) {
-      <Navigate to={"/"} replace></Navigate>;
-    }
-  }, []);
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
 
   return <Outlet />;
 };
