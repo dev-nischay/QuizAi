@@ -1,4 +1,4 @@
-import type { OptionListProps, QuestionListProps } from "../../quiz.types";
+import type { QuestionListProps } from "../../quiz.types";
 import { Pen } from "lucide-react";
 import { OPTION_IDENTITIES } from "../../../../design/bullets";
 
@@ -45,11 +45,23 @@ export const QuestionList = ({ text, correctOptionIndex, options, _id, startEdit
   );
 };
 
-export const OptionList = ({ index, color, shape, correctOptionIndex, opt }: OptionListProps) => {
+export const OptionList = ({
+  index,
+  color,
+  shape,
+  correctOptionIndex,
+  opt,
+}: {
+  index: number;
+  color: string;
+  shape: string;
+  opt: string;
+  correctOptionIndex: number;
+}) => {
   return (
     <div
       key={index}
-      className={`flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1A1F2A] border border-slate-100 dark:border-white/5 ${correctOptionIndex === index ? "border-emerald-600 dark:border-emerald-400" : "bg-slate-50 dark:bg-[#1A1F2A]"}`}
+      className={`flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1A1F2A] border  ${correctOptionIndex === index ? "border-emerald-600 dark:border-emerald-400" : " border-slate-100 dark:border-white/5"}`}
     >
       <span className="text-sm select-none" style={{ color }}>
         {shape}

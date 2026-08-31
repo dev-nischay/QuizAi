@@ -13,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { submitQuiz } from "../services/postQuiz";
 import { liveQuiz } from "../services/liveQuiz";
 import { useState } from "react";
+import { useAuthStore } from "../store/authStore";
 
 export type QuizFormData = {
   title: string;
@@ -25,6 +26,8 @@ export type QuizResponse = {
 };
 
 export const usePublishQuiz = (title: string, questions: Question[]) => {
+  const setRoomCode = useAuthStore((state) => state.setRoomCode);
+
   const submitMutation = useMutation<ApiResponse<QuizResponse>, ApiError, QuizFormData>({
     mutationFn: submitQuiz,
   });
@@ -38,8 +41,12 @@ export const usePublishQuiz = (title: string, questions: Question[]) => {
   const publishQuiz = async () => {
     try {
       setLoading(true);
-      await submitMutation.mutateAsync({ title, questions });
+      const quiz = await submitMutation.mutateAsync({ title, questions });
       await liveMutation.mutateAsync();
+
+      if (quiz.data?.roomCode) {
+        setRoomCode(quiz.data?.roomCode);
+      }
     } catch (error) {
       const errMessage = error as ApiError;
       setError(errMessage.error);

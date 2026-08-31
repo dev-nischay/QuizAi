@@ -6,8 +6,11 @@ import { LoaderCircle, Plus, RocketIcon, Wand } from "lucide-react";
 import { EditModal } from "../../modals/EditModal";
 import { AIQuestionModal } from "../../modals/AIQuestionModal";
 import { usePublishQuiz } from "../../../hooks/PublishQuizHook";
+import { useNavigate } from "react-router-dom";
 
 export default function QuizBuilderPage() {
+  const nav = useNavigate();
+
   // Quiz Data State
   const [quizTitle, setQuizTitle] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -67,7 +70,10 @@ export default function QuizBuilderPage() {
       return;
     }
 
-    setPublishStatus({ type: "success", message: "Quiz Published Successfully! (Simulated)" });
+    setPublishStatus({ type: "success", message: "Quiz Published Successfully! Redirecting..." });
+
+    nav("/live");
+
     setTimeout(() => setPublishStatus({ type: "", message: "" }), 3000);
     setQuestions([]);
     setQuizTitle("");
