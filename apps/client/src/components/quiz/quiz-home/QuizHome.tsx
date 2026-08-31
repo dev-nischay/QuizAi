@@ -14,6 +14,7 @@ export type RoomProps = {
 
 export default function QuizHomePage() {
   const [roomCode, setRoomCode] = useState("");
+  const setRoomCodeStore = useAuthStore((state) => state.setRoomCode);
   const [joinStatus, setJoinStatus] = useState({ type: "", message: "" });
   const setRole = useAuthStore((state) => state.setRole);
   const nav = useNavigate();
@@ -37,9 +38,8 @@ export default function QuizHomePage() {
         console.log("Joining room:", roomCode);
         setRole("guest");
         setJoinStatus({ type: "success", message: "Connecting to room..." });
-
-        // nav("/live") uncomment this when live page is completed
-        alert("redirect to live page now ");
+        setRoomCodeStore(roomCode);
+        nav("/live");
 
         setTimeout(() => {
           setIsJoining(false);
