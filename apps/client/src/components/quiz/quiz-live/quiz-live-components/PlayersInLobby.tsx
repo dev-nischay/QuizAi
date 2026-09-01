@@ -1,4 +1,3 @@
-import { Users } from "lucide-react";
 import { useLiveStore } from "../../../../store/liveStore";
 import { getInitials } from "../../../../utils/getInitials";
 export const PlayerInLobby = () => {
@@ -16,7 +15,7 @@ export const PlayerInLobby = () => {
     <div className="w-full min-h-[160px] flex flex-col items-center mb-10 sm:mb-14">
       {players.length === 0 ? (
         <div
-          className="qz-fade-in flex flex-col items-center justify-center h-full opacity-50 py-10"
+          className="animate-fadeIn flex flex-col items-center justify-center h-full opacity-50 py-10"
           style={{ animationDelay: "200ms" }}
         >
           <i className="ph ph-ghost text-4xl mb-3"></i>
@@ -30,7 +29,7 @@ export const PlayerInLobby = () => {
             return (
               <div
                 key={`${name}-${i}`}
-                className="qz-fade-in flex flex-col items-center gap-2.5 group"
+                className="animate-fadeIn flex flex-col items-center gap-2.5 group"
                 style={{ animationDelay: `${Math.min(i * 40, 800)}ms` }}
               >
                 <div
