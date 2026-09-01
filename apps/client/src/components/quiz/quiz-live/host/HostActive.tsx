@@ -1,110 +1,83 @@
-import { Eye, Play, EyeOff } from "lucide-react";
 import Leaderboard from "../quiz-live-components/Leaderboard";
-import Badge from "../quiz-live-components/Badge";
-import type { HostOptionProps } from "../../quiz.types";
-import type { Options } from "@common/contracts";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLiveStore } from "../../../../store/liveStore";
 import { endQuiz } from "../../../../live/handlers/host/stopQuiz";
 import { showQuestion } from "../../../../live/handlers/host/showQuestion";
 import { socketService } from "../../../../live/socket-client";
 import { useShallow } from "zustand/shallow";
-export default function HostActive() {
+import { RealTimePoll } from "../quiz-live-components/LivePolls";
+import { LiveAnswerKey } from "../quiz-live-components/LiveAnswerKey";
+export default function HostLive() {
   const [currentQuestion, quizDetails] = useLiveStore(
     useShallow((state) => [state.currentQuestion, state.quizDetails]),
   );
 
-  const [showAnswer, setShowAnswer] = useState(true);
+  const [showResult, setShowResult] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // add roomCode in design later
+  const toggleResult = () => {
+    setShowResult(true);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setShowResult(false);
+    }, 3000);
+  };
 
   return (
-    <div className="w-full flex lg:flex-row flex-col 2xl:mt-20 mt-4 gap-4">
-      {/* Left Column */}
-      <div className="flex-1 flex flex-col gap-4">
-        {/* quiz detals */}
-        <div className="bg-gradient-to-br from-gray-900/90 to-black/90 border border-emerald-500/30 rounded-2xl p-6">
-          <div className="capitalize font-bold pt-2  text-2xl">{quizDetails?.title}</div>
-          <div className="font-mono capitalize text-sm text-gray-500 tracking-wider flex items-center gap-3 mt-2 pb-5">
-            <span>{quizDetails?.totalQuestionCount} Questions</span>
-            <span>•</span>
-            <span>In Progress</span>
+    <div className="w-full lg:max-w-6xl  2xl:max-w-[96rem] mx-auto flex flex-col lg:flex-row gap-6 pt-24 pb-12 px-6  2xl:mt-36 ">
+      {/* Left: Main Question Area (hero) */}
+      <div className="flex-1 flex flex-col gap-6 animate-fadeIn ">
+        <RealTimePoll />
+
+        <div className="bg-white/80 dark:bg-[#141821]/80 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => socketService.sendMessage(endQuiz())}
+              className="font-sans font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-rose-400 hover:bg-red-50 dark:hover:bg-rose-500/10 px-3.5 py-3 rounded-lg transition-colors flex items-center gap-1.5"
+            >
+              <i className="ph-bold ph-x-circle text-base"></i>
+              End Quiz Early
+            </button>
+
+            <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1"></div>
+
+            <button
+              onClick={toggleResult}
+              className={`font-sans font-semibold text-sm rounded-lg px-5 py-3 flex items-center gap-2 transition-all shadow-sm ${
+                showResult
+                  ? "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-500/25"
+                  : "text-white bg-emerald-600 dark:bg-emerald-400 dark:text-slate-900 hover:brightness-105 active:brightness-95"
+              }`}
+            >
+              <i className={`ph-bold ${showResult ? "ph-eye-slash" : "ph-eye"} text-base`}></i>
+              {showResult ? "Hide Answer" : "Show Answer"}
+            </button>
           </div>
-        </div>
-
-        {/* quiz active state */}
-        <div className="bg-gradient-to-br  from-gray-900/90 to-black/90 border border-emerald-500/30 rounded-2xl p-6  ">
-          <Badge text={"question 1"} />
-          {/* current live question */}
-          <div className="font-bold text-xl mt-4 ">{currentQuestion?.text}</div>
-
-          {currentQuestion?.options.map((e, index) => (
-            <HostOption
-              correctOptionIndex={currentQuestion.correctOptionIndex!} // correct index will only exist for host
-              text={e}
-              optionIndex={index as Options}
-              show={showAnswer}
-            />
-          ))}
-        </div>
-
-        <div className="w-full flex gap-2">
-          <button
-            onClick={() => setShowAnswer((prev) => !prev)}
-            className="bg-black w-1/2 border-2 border-emerald-950 flex justify-center py-4  rounded-xl gap-2 items-center transition-all z-10"
-          >
-            <div>{showAnswer ? <Eye size={20} /> : <EyeOff size={20} />}</div>
-            <div className="text-sm lg:text-base uppercase font-bold cursor-pointer">
-              {showAnswer ? "show answer" : "hide answer"}
-            </div>
-          </button>
 
           <button
             onClick={() => socketService.sendMessage(showQuestion())}
-            className="bg-gradient-to-br w-1/2 from-emerald-600 hover:scale-105 to-teal-600 flex justify-center py-4  rounded-xl gap-2 items-center transition-all z-10"
+            className="group font-sans font-semibold text-sm text-white bg-emerald-600 dark:bg-emerald-400 dark:text-slate-900 hover:brightness-105 active:brightness-95 rounded-lg px-6 py-3 flex items-center gap-2 transition-all shadow-sm"
           >
-            <div>
-              <Play size={20} />
-            </div>
-            <div className=" text-sm lg:text-base uppercase font-bold cursor-pointer">next question</div>
+            {currentQuestion?.currentQuestionIndex! < quizDetails?.totalQuestionCount! - 1
+              ? "Next Question"
+              : "Finish Quiz"}
+            <i className="ph-bold ph-arrow-right text-base transition-transform group-hover:translate-x-0.5"></i>
           </button>
         </div>
-
-        <button
-          onClick={() => socketService.sendMessage(endQuiz())}
-          className="w-full bg-red-950/50 border-red-900/50 hover:border-red-800/50 hover:bg-red-900/50  border  flex justify-center py-4 mt-2 rounded-xl gap-2 items-center transition-all z-10"
-        >
-          <div className=" text-red-400 font-bold cursor-pointer capitalize">end quiz early</div>
-        </button>
       </div>
 
-      {/*  leaderboard stats */}
-      <Leaderboard />
+      {/* Right: Leaderboard + tiny answer key */}
+      <div className="lg:w-80 2xl:w-[30%] flex flex-col gap-4 ">
+        <Leaderboard />
+        <LiveAnswerKey
+          options={currentQuestion!.options}
+          correctOptionIndex={currentQuestion!.correctOptionIndex!}
+          revealed={showResult}
+        />
+      </div>
     </div>
   );
 }
-
-const HostOption = ({ text, optionIndex, correctOptionIndex, show }: HostOptionProps) => {
-  return (
-    <div className="relative">
-      <div
-        className={`w-full text-sm  px-4 py-4 capitalize   rounded-lg outline-none mt-3  ring-0  border-2  placeholder:text-gray-500 focus:ring-2 flex gap-3 items-center transition-all ${
-          optionIndex === correctOptionIndex && show
-            ? "border-emerald-400 bg-emerald-900 "
-            : optionIndex !== correctOptionIndex && show
-              ? "bg-red-500/20 border-gray-700 "
-              : "border-gray-700 bg-black  hover:border-gray-500"
-        }`}
-      >
-        <span
-          className={`px-2 py-1 rounded-md my-auto  font-mono text-xs transition-all ${
-            optionIndex === correctOptionIndex && show ? "bg-emerald-500 text-white" : "bg-gray-800 text-neutral-400"
-          } `}
-        >
-          {String.fromCharCode(65 + optionIndex)}
-        </span>
-        <span>{text}</span>
-      </div>
-    </div>
-  );
-};
