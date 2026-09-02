@@ -5,9 +5,11 @@ import { useResultStore } from "../store/resultStore";
 export const resetQuizState = () => {
   const resetRole = useAuthStore.getState().setRole;
   const resetResult = useResultStore.getState().reset;
+  const setRoomCode = useAuthStore.getState().setRoomCode;
   const resetLiveSession = useLiveStore.getState().reset;
   console.log("reset ran");
   resetRole(null);
+  setRoomCode(null);
   resetResult();
   resetLiveSession();
 

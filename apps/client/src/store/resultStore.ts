@@ -33,7 +33,7 @@ export const useResultStore = create<ResultStore>()(
       name: "results",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        roomCode: state.finalResult,
+        finalResult: state.finalResult,
       }),
     },
   ),
