@@ -1,8 +1,15 @@
 import type { Question, Options } from "../types/global.types.js";
 
-export type Result = {
+export type Vote = {
   name: string;
   selectedOptionIndex: Options;
+};
+
+export type PollsUpdates = {
+  type: "POLLS";
+  roomCode: string;
+  questionId: string;
+  votes: Vote[];
 };
 
 export type LeaderBoard = {
@@ -44,13 +51,6 @@ export type SubmitAnswerResponse = {
   correctAnswerIndex: Options;
   yourScore: number;
   message: string;
-};
-
-export type PollsUpdates = {
-  type: "POLLS";
-  quizId: string;
-  questionId: string;
-  results: Result[];
 };
 
 export type ServerError = {
