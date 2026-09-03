@@ -11,6 +11,7 @@ export const messageRouter = (response: ServerResponse) => {
     case "QUESTION":
       const { text, options, correctOptionIndex, currentQuestionIndex } = response; // correctOptionIndex only available for host will remain undefined for other
       setQuestion({ text, options, correctOptionIndex, currentQuestionIndex });
+      setVotes([]); // reset votes on new question
       break;
 
     case "ANSWER_RESULT":
