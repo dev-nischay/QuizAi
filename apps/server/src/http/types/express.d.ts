@@ -5,6 +5,8 @@ declare namespace Express {
       username: string;
     };
 
+    name: "nischay";
+
     validatedBody: unknown;
     validatedParams: {
       id: string;

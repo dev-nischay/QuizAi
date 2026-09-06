@@ -1,13 +1,3 @@
-// const { isPending, mutate, isError } = useMutation<ApiResponse<{ message: string }>, ApiError>({
-//     mutationFn: liveQuiz,
-//     onSuccess: () => {
-//       nav("/live");
-//     },
-//     onError: (err) => {
-//       setGenericError(err.error); // error:generic error
-//     },
-//   });
-
 import type { ApiError, ApiResponse, Question } from "@common/contracts";
 import { useMutation } from "@tanstack/react-query";
 import { submitQuiz } from "../services/postQuiz";
